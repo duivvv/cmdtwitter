@@ -14,7 +14,7 @@ npm install -g cmdtwitter
 * create consumer and access keys on tab "Keys and Access Tokens" for your app
 * add the following environment variables to your .profile/.bash_profile...
 
-```js
+```bash
 
 export TWT_CONSUMER_KEY=<consumer_key>
 export TWT_CONSUMER_SECRET=<consumer_secret>
