@@ -10,7 +10,7 @@
 
 ```
 
-export TWT_CONSUMER_KEY=<consume_key>
+export TWT_CONSUMER_KEY=<consumer_key>
 export TWT_CONSUMER_SECRET=<consumer_secret>
 export TWT_ACCESS_TOKEN=<access_token>
 export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
