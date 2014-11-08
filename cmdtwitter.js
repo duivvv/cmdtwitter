@@ -1,11 +1,6 @@
 #!/usr/bin/env node
 
-var request = require('request');
 var Twit = require("twit");
-
-var dotenv = require('dotenv');
-dotenv._getKeysAndValuesFromEnvFilePath(__dirname + "/.env");
-dotenv._setEnvs();
 
 var args = require("command-line-args");
 
@@ -21,10 +16,10 @@ var cli = args([
 var obj = cli.parse();
 
 var client = new Twit({
-	consumer_key: process.env.CONSUMER_KEY,
-	consumer_secret: process.env.CONSUMER_SECRET,
-	access_token: process.env.ACCESS_TOKEN,
-	access_token_secret: process.env.ACCESS_TOKEN_SECRET
+	consumer_key: process.env.TWT_CONSUMER_KEY,
+	consumer_secret: process.env.TWT_CONSUMER_SECRET,
+	access_token: process.env.TWT_ACCESS_TOKEN,
+	access_token_secret: process.env.TWT_ACCESS_TOKEN_SECRET
 });
 
 if(obj.status.length === 0){
