@@ -1,0 +1,25 @@
+{
+  "name": "cmdtwitter",
+  "version": "0.0.1",
+  "description": "command line twitter client",
+  "main": "cmdtwitter.js",
+	"bin": {
+		"twt": "./cmdtwitter.js"
+	},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/duivvv/cmdtwitter"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node cmdtwitter.js"
+  },
+  "author": "Geoffrey Dhuyvetters",
+  "license": "ISC",
+  "dependencies": {
+    "command-line-args": "^0.5.3",
+    "dotenv": "^0.4.0",
+    "request": "^2.47.0",
+    "twit": "^1.1.18"
+  }
+}
