@@ -36,7 +36,7 @@ Usage
 -s, --search <string>  search query
 -h, --help             Print usage instructions
 
-``
+```
 
 ### examples
 
