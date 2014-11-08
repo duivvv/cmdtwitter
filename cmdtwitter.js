@@ -1,19 +1,48 @@
 #!/usr/bin/env node
 
 var Twit = require("twit");
+var chalk = require("chalk");
 
 var args = require("command-line-args");
 
+require("dotenv").load();
+
 var cli = args([
     {
-    	name: "status",
+    	name: "tweet",
     	type: String,
-    	defaultOption: true,
-    	description: "the tweet"
-    }
+    	alias: "t",
+    	description: "the tweet you want send"
+    },
+    {
+    	name: "search",
+    	alias: "s",
+    	type: String,
+    	description: "search query"
+    },
+    {
+    	name: "help",
+    	alias: "h",
+    	type: Boolean,
+    	description: "Print usage instructions"
+    },
+
 ]);
 
 var obj = cli.parse();
+
+var usage = cli.getUsage({
+    header: "cmdtwitter, a command line twitter client",
+    footer: ""
+});
+
+if(obj.help){
+	console.log(usage);
+}else{
+	if(process.env.LOCAL){
+		console.log(obj)
+	}
+}
 
 var client = new Twit({
 	consumer_key: process.env.TWT_CONSUMER_KEY,
@@ -22,26 +51,44 @@ var client = new Twit({
 	access_token_secret: process.env.TWT_ACCESS_TOKEN_SECRET
 });
 
-if(obj.status.length === 0){
-	return;
+if(!process.env.LOCAL){
+
+	if(obj.tweet){
+		tweet(obj.tweet);
+	}
+
 }
 
-if(obj.status.length > 140){
-	console.log("----")
-	console.log("FAILED: tweet is too long");
-	return;
-}else{
-	client.post('statuses/update', obj, function(err, data, response) {
+if(obj.search){
+	search(obj.search)
+}
+
+function tweet(status){
+	if(status.length === 0){
+		console.log(chalk.bgRed(" FAILED:please enter a tweet "));
+		return;
+	}
+	if(status.length > 140){
+		console.log(chalk.bgRed(" FAILED: tweet is too long "));
+		return;
+	}
+	client.post('statuses/update', {status: status}, function(err, data, response) {
 		if(err){
-			console.log("----")
-			console.log("FAILED");
+			console.log(chalk.bgRed(" FAILED: could not post tweet "));
 			return;
 		}
 		if(data){
-			console.log("----")
-			console.log("POSTED");
+			console.log(chalk.bgGreen(" POSTED "));
 			return;
 		}
-	})
+	});
 }
 
+function search(query){
+	client.get('search/tweets', {q: query+"+exclude:retweets+exclude:replies", count: 10}, function(err, data, response) {
+	 for(var i = 0;i < data.statuses.length; i++){
+	 	var status = data.statuses[i];
+	 	console.log(chalk.cyan("@" + status.user.screen_name) + ": " + chalk.white(status.text));
+	 }
+	})
+}

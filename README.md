@@ -28,14 +28,27 @@ export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
 ## usage
 
 ```
-$ twt "my tweet"
+cmdtwitter, a command line twitter client
+
+Usage
+
+-t, --tweet <string>   the tweet you want send
+-s, --search <string>  search query
+-h, --help             Print usage instructions
+
+``
+
+### examples
+
+```
+$ twt -t "my tweet"
 ```
 
-## 0.0.1
-
-proof of concept
+```
+$ twt -s "#devinehowest"
+```
 
 ## todo
 
 * add authentication / skip environment variables step
-* make this a full client
+* add functionality
