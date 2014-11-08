@@ -5,7 +5,7 @@
     npm install --g cmdtwitter
 
 * create a twitter application [https://apps.twitter.com/](https://apps.twitter.com/)
-* fill in keys created on tab "Keys and Access Tokens" on your app's page
+* create consumer and access keys on tab "Keys and Access Tokens" for your app
 * add the following environment variables to your .profile/.bash_profile...
 
 ```
