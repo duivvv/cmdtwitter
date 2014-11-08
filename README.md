@@ -28,13 +28,14 @@ export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
 ## usage
 
 ```
-cmdtwitter, a command line twitter client
+
+$ twt {arguments} <content>
 
 Usage
 
--t, --tweet <string>   the tweet you want send
--s, --search <string>  search query
--h, --help             Print usage instructions
+-t, --tweet <string>   send a tweet
+-s, --search <string>  search for a specific query
+-h, --help             show help
 
 ```
 

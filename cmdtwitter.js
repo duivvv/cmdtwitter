@@ -12,19 +12,19 @@ var cli = args([
     	name: "tweet",
     	type: String,
     	alias: "t",
-    	description: "the tweet you want send"
+    	description: "send a tweet"
     },
     {
     	name: "search",
     	alias: "s",
     	type: String,
-    	description: "search query"
+    	description: "search for a specific query"
     },
     {
     	name: "help",
     	alias: "h",
     	type: Boolean,
-    	description: "Print usage instructions"
+    	description: "show help"
     },
 
 ]);
@@ -32,7 +32,7 @@ var cli = args([
 var obj = cli.parse();
 
 var usage = cli.getUsage({
-    header: "cmdtwitter, a command line twitter client",
+    header: "cmdtwitter, a command line twitter client \n\n  $ twt {arguments} <content>",
     footer: ""
 });
 
