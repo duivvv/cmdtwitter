@@ -5,7 +5,7 @@
 With [npm](http://npmjs.org) do:
 
 ```
-npm install -g browserify
+npm install -g cmdtwitter
 ```
 
 ## setup
