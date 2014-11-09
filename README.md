@@ -20,8 +20,12 @@ export TWT_CONSUMER_KEY=<consumer_key>
 export TWT_CONSUMER_SECRET=<consumer_secret>
 export TWT_ACCESS_TOKEN=<access_token>
 export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
+export TWT_SCREEN_NAME=<screen_name> # without @, for coloring
+# example: export TWT_SCREEN_NAME=duivvv
 
 ```
+
+
 
 * restart your terminal
 
@@ -37,8 +41,8 @@ Usage
 
 -t, --tweet <string>   status to tweet
 -s, --search <string>  search query
--h, --home             flag to display your timeline
--l, --limit <number>   limit results of query
+-h, --home             flag to display your timeline, default action
+-l, --limit <number>   limit results of query, default 15
 --help                 show help
 
 ```
@@ -50,11 +54,15 @@ $ twt -t "my tweet"
 ```
 
 ```
+$ twt -s "#devinehowest" -l 50
+
 $ twt -s "#devinehowest"
 ```
 
 ```
 $ twt -h
+
+$ twt
 ```
 
 Tweets are displayed in reverse order (latest ones last).
