@@ -118,7 +118,7 @@ function search(query, limit){
 	limit = limit || 10;
 	client.get('search/tweets', {q: query+"+exclude:retweets+exclude:replies", count: limit}, function(err, data, response) {
 		if(err){
-			fail("could not get tweets");
+			fail("could not get tweets / " + err.message);
 			return;
 		}
 		success("displaying last " + limit + " search results for '" + query + "'");
@@ -148,7 +148,8 @@ function home(limit){
 	limit = limit || 10;
 	client.get('statuses/home_timeline', {count: limit}, function(err, data, response) {
 		if(err){
-			fail("could not get tweets");
+			fail("could not get tweets / " + err.message);
+			console.log(err);
 			return;
 		}
 		success("displaying last " + limit + " tweets on your timeline");
