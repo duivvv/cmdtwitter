@@ -12,7 +12,7 @@ npm install -g cmdtwitter
 
 * create a twitter application [https://apps.twitter.com/](https://apps.twitter.com/)
 * create consumer and access keys on tab "Keys and Access Tokens" for your app
-* add the following environment variables to your .profile/.bash_profile...
+* add the keys as environment variables in your .profile/.bash_profile...
 
 ```bash
 
@@ -23,19 +23,23 @@ export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
 
 ```
 
-* you will have to probably restart your terminal
+* restart your terminal
 
 ## usage
 
 ```
 
+cmdtwitter, a command line twitter client
+
 $ twt {arguments} <content>
 
 Usage
 
--t, --tweet <string>   send a tweet
--s, --search <string>  search for a specific query
--h, --help             show help
+-t, --tweet <string>   status to tweet
+-s, --search <string>  search query
+-h, --home             flag to display your timeline
+-l, --limit <number>   limit results of query
+--help                 show help
 
 ```
 
@@ -49,7 +53,14 @@ $ twt -t "my tweet"
 $ twt -s "#devinehowest"
 ```
 
+```
+$ twt -h
+```
+
+Tweets are displayed in reverse order (latest ones last).
+
 ## todo
 
-* add authentication / skip environment variables step
+* make environment variables step interactive (--set KEY_NAME --key ...)
 * add functionality
+* async url expanding (http://t.co to original URL)

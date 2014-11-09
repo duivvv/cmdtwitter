@@ -1,6 +1,6 @@
 {
   "name": "cmdtwitter",
-  "version": "0.1.4",
+  "version": "0.2.0",
   "description": "command line twitter client",
   "main": "cmdtwitter.js",
   "bin": {
@@ -20,6 +20,7 @@
     "chalk": "^0.5.1",
     "command-line-args": "^0.5.3",
     "dotenv": "^0.4.0",
+    "moment": "^2.8.3",
     "twit": "^1.1.18"
   }
 }

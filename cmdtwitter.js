@@ -2,6 +2,7 @@
 
 var Twit = require("twit");
 var chalk = require("chalk");
+var moment = require("moment");
 
 var args = require("command-line-args");
 
@@ -12,20 +13,32 @@ var cli = args([
     	name: "tweet",
     	type: String,
     	alias: "t",
-    	description: "send a tweet"
+    	description: "status to tweet"
     },
     {
     	name: "search",
     	alias: "s",
     	type: String,
-    	description: "search for a specific query"
+    	description: "search query"
+    },
+    {
+    	name: "home",
+    	alias: "h",
+    	type: Boolean,
+    	description: "flag to display your timeline"
+    },
+    {
+    	name: "limit",
+    	alias: "l",
+    	type: Number,
+    	value: 15,
+    	description: "limit results of query, default: 15"
     },
     {
     	name: "help",
-    	alias: "h",
     	type: Boolean,
     	description: "show help"
-    },
+    }
 
 ]);
 
@@ -40,7 +53,9 @@ if(obj.help){
 	console.log(usage);
 }else{
 	if(process.env.LOCAL){
+		console.log("")
 		console.log(obj)
+		console.log("")
 	}
 }
 
@@ -51,44 +66,92 @@ var client = new Twit({
 	access_token_secret: process.env.TWT_ACCESS_TOKEN_SECRET
 });
 
-if(!process.env.LOCAL){
-
+if(obj.tweet === null || obj.tweet){
 	if(obj.tweet){
 		tweet(obj.tweet);
+	}else{
+		fail("please enter a tweet: -t '#devinehowest rocks'");
 	}
-
+}else if(obj.search === null || obj.search){
+	if(obj.search){
+		search(obj.search, obj.limit)
+	}else{
+		fail("enter a search query: -s '#devinehowest'");
+	}
+}else if(obj.home){
+	home(obj.limit);
 }
 
-if(obj.search){
-	search(obj.search)
+function fail(message){
+	console.log("\n",chalk.bgRed(" " + message + " "),"\n");
+}
+
+function success(message){
+	console.log("\n",chalk.bgGreen(" " + message + " "),"\n");
+}
+
+function colorizeTweet(tweet){
+	tweet = tweet.replace(/#(\S*)/g,chalk.green("#$1"));
+	tweet = tweet.replace(/@(\S*)/g,chalk.cyan("@$1"));
+	tweet = tweet.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, chalk.yellow.underline("$1"));
+	return tweet;
 }
 
 function tweet(status){
-	if(status.length === 0){
-		console.log(chalk.bgRed(" FAILED:please enter a tweet "));
-		return;
-	}
 	if(status.length > 140){
-		console.log(chalk.bgRed(" FAILED: tweet is too long "));
+		fail("tweet is too long");
 		return;
 	}
 	client.post('statuses/update', {status: status}, function(err, data, response) {
 		if(err){
-			console.log(chalk.bgRed(" FAILED: could not post tweet "));
+			fail("could not post tweet");
 			return;
 		}
 		if(data){
-			console.log(chalk.bgGreen(" POSTED "));
+			success("tweet posted");
 			return;
 		}
 	});
 }
 
-function search(query){
-	client.get('search/tweets', {q: query+"+exclude:retweets+exclude:replies", count: 10}, function(err, data, response) {
-	 for(var i = 0;i < data.statuses.length; i++){
-	 	var status = data.statuses[i];
-	 	console.log(chalk.cyan("@" + status.user.screen_name) + ": " + chalk.white(status.text));
-	 }
+function search(query, limit){
+	limit = limit || 10;
+	client.get('search/tweets', {q: query+"+exclude:retweets+exclude:replies", count: limit}, function(err, data, response) {
+		if(err){
+			fail("could not get tweets");
+			return;
+		}
+		success("displaying last " + limit + " search results for '" + query + "'");
+		displayTweets(data.statuses);
+	})
+}
+
+function formatDate(date){
+	date = new Date(date);
+	return chalk.white.underline(moment(date).format('MMMM Do YYYY, HH:mm:ss'));
+}
+
+function formatTweet(tweet){
+	console.log(chalk.cyan("@" + tweet.user.screen_name))
+	console.log(colorizeTweet(tweet.text));
+	console.log(formatDate(tweet.created_at),"\n");
+}
+
+function displayTweets(data){
+	data = data.reverse();
+	for(var i = 0;i < data.length; i++){
+		formatTweet(data[i]);
+	}
+}
+
+function home(limit){
+	limit = limit || 10;
+	client.get('statuses/home_timeline', {count: limit}, function(err, data, response) {
+		if(err){
+			fail("could not get tweets");
+			return;
+		}
+		success("displaying last " + limit + " tweets on your timeline");
+		displayTweets(data);
 	})
 }
