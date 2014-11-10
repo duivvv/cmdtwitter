@@ -81,9 +81,9 @@ API.prototype.search = function(query, limit, cb){
 		if(limit === 1){
 			msg = "displaying last search results for '" + query + "'";
 		}
-		_processURL.call(this, data, function(data){
+		_processURL.call(this, data.statuses, function(data){
 			return cb(null, {
-				data: data.statuses,
+				data: data,
 				msg: msg
 			});
 		});
