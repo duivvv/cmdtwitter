@@ -30,7 +30,7 @@ var usage = cli.getUsage({
     footer: ""
 });
 
-var api = new API(process.env);
+var api = new API(process.env, obj.expand);
 
 if(obj.tweet === null || obj.tweet){
 	if(obj.tweet){
@@ -56,6 +56,8 @@ if(obj.tweet === null || obj.tweet){
 	}else{
 		Logger.fail("enter a user: -u \"@duivvv\"");
 	}
+}else if(obj.own){
+	api.user_timeline(screen_name, obj.limit, result)
 }else if(obj.home){
 	api.home_timeline(obj.limit, result);
 }

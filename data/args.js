@@ -30,6 +30,12 @@ var args = [
     	description: "user to display timeline, @ is not needed"
     },
     {
+    	name: "own",
+    	alias: "o",
+    	type: Boolean,
+    	description: "flag to display your latest tweets"
+    },
+    {
     	name: "home",
     	alias: "h",
     	type: Boolean,
@@ -43,6 +49,13 @@ var args = [
     	type: Number,
     	value: 15,
     	description: "limit results of query, default 15"
+    },
+    {
+    	name: "expand",
+    	alias: "e",
+    	type: Boolean,
+    	value: false,
+    	description: "expand urls flag"
     },
     {
     	name: "words",

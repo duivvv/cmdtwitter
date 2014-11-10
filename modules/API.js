@@ -1,12 +1,49 @@
 var Twit = require("Twit");
+var expand = require("expand-url");
 
-function API(config){
+function API(config, expand){
+	this.expand = expand || false;
 	this.client = new Twit({
 		consumer_key: config.TWT_CONSUMER_KEY,
 		consumer_secret: config.TWT_CONSUMER_SECRET,
 		access_token: config.TWT_ACCESS_TOKEN,
 		access_token_secret: config.TWT_ACCESS_TOKEN_SECRET
 	});
+}
+
+API.need_to_expand = 0;
+API.expanded = 0;
+
+function _expandURL(id, url, cb){
+	expand.expand(url, function(err, original){
+		if(err){
+			return cb(err)
+		}
+	  return cb(null, id, original);
+	});
+}
+
+function _processURL(data, cb){
+	if(this.expand){
+		for(var i = 0; i < data.length; i++){
+			var regex = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
+			var match = regex.exec(data[i].text);
+			if(match){
+				API.need_to_expand ++;
+				_expandURL(i, match[0], function(err, id, original){
+					API.expanded ++;
+					if(!err){
+						data[id].text = data[id].text.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, original);
+					}
+					if(API.expanded === API.need_to_expand){
+						return cb(data);
+					}
+				});
+			}
+		}
+	}else{
+		return cb(data);
+	}
 }
 
 API.prototype.tweet = function(status, cb){
@@ -34,7 +71,7 @@ API.prototype.search = function(query, limit, cb){
 	this.client.get('search/tweets', {
 		q: query + "+exclude:retweets+exclude:replies",
 		count: limit
-	}, function(err, data, response) {
+	},(function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get tweets / " + err.message
@@ -44,18 +81,20 @@ API.prototype.search = function(query, limit, cb){
 		if(limit === 1){
 			msg = "displaying last search results for '" + query + "'";
 		}
-		return cb(null, {
-			data: data.statuses,
-			msg: msg
+		_processURL.call(this, data, function(data){
+			return cb(null, {
+				data: data.statuses,
+				msg: msg
+			});
 		});
-	});
+	}).bind(this));
 }
 
 API.prototype.home_timeline = function(limit, cb){
 	limit = limit || 15;
 	this.client.get('statuses/home_timeline', {
 		count: limit
-	}, function(err, data, response) {
+	}, (function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get home timeline / " + err.message
@@ -65,18 +104,20 @@ API.prototype.home_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet on your timeline";
 		}
-		return cb(null, {
-			data: data,
-			msg: msg
+		_processURL.call(this, data, function(data){
+			return cb(null, {
+					data: data,
+					msg: msg
+			});
 		});
-	});
+	}).bind(this));
 }
 
 API.prototype.mentions_timeline = function(limit, cb){
 	limit = limit || 15;
 	this.client.get('statuses/mentions_timeline', {
 		count: limit
-	}, function(err, data, response) {
+	}, (function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get mentions / " + err.message
@@ -86,18 +127,20 @@ API.prototype.mentions_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last mention";
 		}
-		return cb(null, {
-			data: data,
-			msg: msg
+		_processURL.call(this, data, function(data){
+			return cb(null, {
+				data: data,
+				msg: msg
+			});
 		});
-	});
+	}).bind(this));
 }
 
 API.prototype.direct_messages = function(limit, cb){
 	limit = limit || 15;
 	this.client.get('direct_messages', {
 		count: limit
-	}, function(err, data, response) {
+	}, (function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get mentions / " + err.message
@@ -107,12 +150,14 @@ API.prototype.direct_messages = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last direct message";
 		}
-		return cb(null, {
-			data: data,
-			msg: msg,
-			dm: true
+		_processURL.call(this, data, function(data){
+			return cb(null, {
+				data: data,
+				msg: msg,
+				dm: true
+			});
 		});
-	});
+	}).bind(this));
 }
 
 API.prototype.user_timeline = function(screen_name, limit, cb){
@@ -123,7 +168,7 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 	this.client.get('statuses/user_timeline', {
 		screen_name: screen_name,
 		count: limit
-	}, function(err, data, response) {
+	}, (function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get tweets of user " + screen_name + " / " + err.message
@@ -133,11 +178,13 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet by @" + screen_name;
 		}
-		return cb(null, {
-			data: data,
-			msg: msg
+		_processURL.call(this, data, function(data){
+			return cb(null, {
+				data: data,
+				msg: msg
+			});
 		});
-	});
+	}).bind(this));
 }
 
 module.exports = API;
