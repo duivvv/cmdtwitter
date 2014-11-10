@@ -11,7 +11,8 @@ npm install -g cmdtwitter
 ## setup
 
 * create a twitter application [https://apps.twitter.com/](https://apps.twitter.com/)
-* create consumer and access keys on tab "Keys and Access Tokens" for your app
+* make sure to set your apps permissions to "Read, write, and direct messages"
+* create consumer and access keys on the "Keys and Access Tokens" tab
 * add the keys as environment variables in your .profile/.bash_profile...
 
 ```bash
@@ -20,18 +21,19 @@ export TWT_CONSUMER_KEY=<consumer_key>
 export TWT_CONSUMER_SECRET=<consumer_secret>
 export TWT_ACCESS_TOKEN=<access_token>
 export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
-export TWT_SCREEN_NAME=<screen_name> # without @, for coloring
+export TWT_SCREEN_NAME=<screen_name> # without @, for colouring
 # example: export TWT_SCREEN_NAME=duivvv
 
 ```
 
-
-
 * restart your terminal
+* done.
+
+(please be aware that most API calls are rate limited)
 
 ## usage
 
-```
+```bash
 
 cmdtwitter, a command line twitter client
 
@@ -41,6 +43,8 @@ Usage
 
 -t, --tweet <string>   status to tweet
 -s, --search <string>  search query
+-m, --mentions         flag to display mentions
+-d, --directmessages   flag to display direct messages
 -h, --home             flag to display your timeline, default action
 -l, --limit <number>   limit results of query, default 15
 --help                 show help
@@ -49,23 +53,40 @@ Usage
 
 ### examples
 
-```
+tweet a new status
+
+```bash
 $ twt -t "my tweet"
 ```
 
+show my timeline
+
+```bash
+$ twt # or $ twt -h
+
 ```
+
+show my mentions
+
+```bash
+$ twt -m
+```
+
+get all tweets with hashtag #devinehowest (first example shows 50, default is 15)
+
+```bash
 $ twt -s "#devinehowest" -l 50
 
 $ twt -s "#devinehowest"
 ```
 
-```
-$ twt -h
+show my direct messages
 
-$ twt
+```bash
+$ twt -d
 ```
 
-Tweets are displayed in reverse order (latest ones last).
+Tweets are displayed in reverse order (newest ones last).
 
 ## todo
 

@@ -1,10 +1,10 @@
 {
   "name": "cmdtwitter",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "command line twitter client",
-  "main": "cmdtwitter.js",
+  "main": "twt.js",
   "bin": {
-    "twt": "./cmdtwitter.js"
+    "twt": "./twt.js"
   },
   "repository": {
     "type": "git",
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node cmdtwitter.js"
+    "start": "node twt.js"
   },
   "author": "Geoffrey Dhuyvetters",
   "license": "MIT",
