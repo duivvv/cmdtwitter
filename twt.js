@@ -12,6 +12,10 @@ require("dotenv").load();
 
 var screen_name = process.env.TWT_SCREEN_NAME;
 
+if(screen_name.indexOf("@") === 0){
+	screen_name = screen_name.substring(1, screen_name.length);
+}
+
 var cli = args(cli_args);
 
 try{
