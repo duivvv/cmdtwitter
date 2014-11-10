@@ -28,62 +28,100 @@ API.prototype.tweet = function(status, cb){
 }
 
 API.prototype.search = function(query, limit, cb){
-	this.limit = limit || 15;
+	limit = limit || 15;
 	this.client.get('search/tweets', {q: query+"+exclude:retweets+exclude:replies", count: limit}, function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get tweets / " + err.message
 			});
 		}
+		var msg = "displaying " + limit + " latest search results for '" + query + "'";
+		if(limit === 1){
+			msg = "displaying last search results for '" + query + "'";
+		}
 		return cb(null, {
 			data: data.statuses,
-			msg:"displaying last " + limit + " search results for '" + query + "'"
+			msg: msg
 		});
 	});
 }
 
-API.prototype.home = function(limit, cb){
-	this.limit = limit || 15;
+API.prototype.home_timeline = function(limit, cb){
+	limit = limit || 15;
 	this.client.get('statuses/home_timeline', {count: limit}, function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get home timeline / " + err.message
 			});
 		}
+		var msg = "displaying " + limit + " latest tweets on your timeline";
+		if(limit === 1){
+			msg = "displaying last tweet on your timeline";
+		}
 		return cb(null, {
 			data: data,
-			msg: "displaying last " + limit + " tweets on your timeline"
+			msg: msg
 		});
 	});
 }
 
-API.prototype.mentions = function(limit, cb){
-	this.limit = limit || 15;
+API.prototype.mentions_timeline = function(limit, cb){
+	limit = limit || 15;
 	this.client.get('statuses/mentions_timeline', {count: limit}, function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get mentions / " + err.message
 			});
 		}
+		var msg = "displaying " + limit + " latest mentions";
+		if(limit === 1){
+			msg = "displaying last mention";
+		}
 		return cb(null, {
 			data: data,
-			msg: "displaying last " + limit + " mentions"
+			msg: msg
 		});
 	});
 }
 
 API.prototype.direct_messages = function(limit, cb){
-	this.limit = limit || 15;
+	limit = limit || 15;
 	this.client.get('direct_messages', {count: limit}, function(err, data, response) {
 		if(err){
 			return cb({
 				msg: "could not get mentions / " + err.message
 			});
 		}
+		var msg ="displaying " + limit + " latest direct messages";
+		if(limit === 1){
+			msg = "displaying last direct message";
+		}
 		return cb(null, {
 			data: data,
-			msg: "displaying last " + limit + " direct messages",
+			msg: msg,
 			dm: true
+		});
+	});
+}
+
+API.prototype.user_timeline = function(screen_name, limit, cb){
+	limit = limit || 15;
+	if(screen_name.indexOf("@") === 0){
+		screen_name = screen_name.substring(1,screen_name.length)
+	}
+	this.client.get('statuses/user_timeline', {screen_name: screen_name, count: limit}, function(err, data, response) {
+		if(err){
+			return cb({
+				msg: "could not get tweets of user " + screen_name + " / " + err.message
+			});
+		}
+		var msg = "displaying last " + limit + " tweets by @" + screen_name;
+		if(limit === 1){
+			msg = "displaying last tweet by @" + screen_name;
+		}
+		return cb(null, {
+			data: data,
+			msg: msg
 		});
 	});
 }

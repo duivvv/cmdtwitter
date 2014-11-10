@@ -47,6 +47,7 @@ Usage
 -s, --search <string>  search query
 -m, --mentions         flag to display mentions
 -d, --directmessages   flag to display direct messages
+-u, --user <string>    user to display timeline, @ is not needed
 -h, --home             flag to display your timeline, default action
 -l, --limit <number>   limit results of query, default 15
 -w, --words <number>   words per line, default 12
@@ -74,7 +75,13 @@ show my mentions
 $ twt -m
 ```
 
-get all tweets with hashtag #devinehowest (first example shows 50, default is 15)
+get tweets by user *devine_howest*
+
+```bash
+$ twt -u "devine_howest"
+```
+
+get all tweets with hashtag *#devinehowest* (first example shows 50, default is 15)
 
 ```bash
 $ twt -s "#devinehowest" -l 50

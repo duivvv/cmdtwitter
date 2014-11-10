@@ -24,6 +24,12 @@ var args = [
     	description: "flag to display direct messages"
     },
     {
+    	name: "user",
+    	alias: "u",
+    	type: String,
+    	description: "user to display timeline, @ is not needed"
+    },
+    {
     	name: "home",
     	alias: "h",
     	type: Boolean,

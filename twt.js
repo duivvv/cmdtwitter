@@ -41,13 +41,19 @@ if(obj.tweet === null || obj.tweet){
 		Logger.fail("enter a search query: -s \"#devinehowest\"");
 	}
 }else if(obj.mentions){
-	api.mentions(obj.limit, result);
+	api.mentions_timeline(obj.limit, result);
 }else if(obj.directmessages){
 	api.direct_messages(obj.limit, result);
 }else if(obj.help){
 	Logger.log(usage);
+}else if(obj.user === null || obj.user){
+	if(obj.user){
+		api.user_timeline(obj.user, obj.limit, result)
+	}else{
+		Logger.fail("enter a user: -u \"@duivvv\"");
+	}
 }else if(obj.home){
-	api.home(obj.limit, result);
+	api.home_timeline(obj.limit, result);
 }
 
 function result(err, result){
