@@ -49,7 +49,7 @@ Usage
 -d, --directmessages   flag to display direct messages
 -h, --home             flag to display your timeline, default action
 -l, --limit <number>   limit results of query, default 15
--w, --words <number>   words per line
+-w, --words <number>   words per line, default 12
 --help                 show help
 
 ```
@@ -65,8 +65,7 @@ $ twt -t "my tweet"
 show my timeline
 
 ```bash
-$ twt # or $ twt -h
-
+$ twt
 ```
 
 show my mentions
