@@ -75,7 +75,7 @@ show my mentions
 $ twt -m
 ```
 
-get tweets by user *devine_howest*
+get tweets by user *@devine_howest*
 
 ```bash
 $ twt -u "devine_howest"
