@@ -101,3 +101,4 @@ Tweets are displayed in reverse order (newest ones last).
 * make environment variables step interactive (--set KEY_NAME --key ...)
 * add functionality
 * async url expanding (http://t.co to original URL)
+* marking search results
