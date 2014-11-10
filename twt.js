@@ -6,64 +6,20 @@ var API = require("./modules/API.js");
 var Tweet = require("./modules/Tweet.js");
 var Logger = require("./modules/Logger.js");
 
+var cli_args = require("./data/args.js");
+
 require("dotenv").load();
 
 var screen_name = process.env.TWT_SCREEN_NAME;
 
-var cli = args([
-    {
-    	name: "tweet",
-    	type: String,
-    	alias: "t",
-    	description: "status to tweet"
-    },
-    {
-    	name: "search",
-    	alias: "s",
-    	type: String,
-    	description: "search query"
-    },
-    {
-    	name: "mentions",
-    	alias: "m",
-    	type: Boolean,
-    	description: "flag to display mentions"
-    },
-    {
-    	name: "directmessages",
-    	alias: "d",
-    	type: Boolean,
-    	description: "flag to display direct messages"
-    },
-    {
-    	name: "home",
-    	alias: "h",
-    	type: Boolean,
-    	defaultOption: true,
-    	value: true,
-    	description: "flag to display your timeline, default action"
-    },
-    {
-    	name: "limit",
-    	alias: "l",
-    	type: Number,
-    	value: 15,
-    	description: "limit results of query, default 15"
-    },
-    {
-    	name: "words",
-    	alias: "w",
-    	type: Number,
-    	description: "words per line"
-    },
-    {
-    	name: "help",
-    	type: Boolean,
-    	description: "show help"
-    }
-]);
+var cli = args(cli_args);
 
-var obj = cli.parse();
+try{
+	var obj = cli.parse();
+}catch(err){
+	Logger.fail("enter a valid command, see twt --help");
+	return;
+}
 
 var usage = cli.getUsage({
     header: "cmdtwitter, a command line twitter client \n\n  $ twt {arguments} <content>",
@@ -74,29 +30,27 @@ var api = new API(process.env);
 
 if(obj.tweet === null || obj.tweet){
 	if(obj.tweet){
-		api.tweet(obj.tweet, resultHandler);
+		api.tweet(obj.tweet, result);
 	}else{
 		Logger.fail("please enter a tweet: -t \"#devinehowest rocks\"");
 	}
 }else if(obj.search === null || obj.search){
 	if(obj.search){
-		api.search(obj.search, obj.limit, resultHandler)
+		api.search(obj.search, obj.limit, result)
 	}else{
 		Logger.fail("enter a search query: -s \"#devinehowest\"");
 	}
 }else if(obj.mentions){
-	api.mentions(obj.limit, resultHandler);
+	api.mentions(obj.limit, result);
 }else if(obj.directmessages){
-	api.direct_messages(obj.limit, resultHandler);
+	api.direct_messages(obj.limit, result);
 }else if(obj.help){
 	Logger.log(usage);
 }else if(obj.home){
-	api.home(obj.limit, resultHandler);
-}else{
-	Logger.fail("enter a valid command, see twt --help");
+	api.home(obj.limit, result);
 }
 
-function resultHandler(err, result){
+function result(err, result){
 	if(err){
 		Logger.fail(err.msg);
 		return;

@@ -21,7 +21,9 @@ export TWT_CONSUMER_KEY=<consumer_key>
 export TWT_CONSUMER_SECRET=<consumer_secret>
 export TWT_ACCESS_TOKEN=<access_token>
 export TWT_ACCESS_TOKEN_SECRET=<access_token_secret>
-export TWT_SCREEN_NAME=<screen_name> # without @, for colouring
+
+export TWT_SCREEN_NAME=<screen_name>
+# without @, for colouring
 # example: export TWT_SCREEN_NAME=duivvv
 
 ```
@@ -29,7 +31,7 @@ export TWT_SCREEN_NAME=<screen_name> # without @, for colouring
 * restart your terminal
 * done.
 
-(please be aware that most API calls are rate limited)
+*please be aware that most API calls are rate limited*
 
 ## usage
 
