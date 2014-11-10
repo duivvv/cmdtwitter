@@ -78,7 +78,6 @@ get all tweets with hashtag #devinehowest (first example shows 50, default is 15
 
 ```bash
 $ twt -s "#devinehowest" -l 50
-
 $ twt -s "#devinehowest"
 ```
 
