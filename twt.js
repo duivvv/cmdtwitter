@@ -51,6 +51,12 @@ var cli = args([
     	description: "limit results of query, default 15"
     },
     {
+    	name: "words",
+    	alias: "w",
+    	type: Number,
+    	description: "words per line"
+    },
+    {
     	name: "help",
     	type: Boolean,
     	description: "show help"
@@ -101,6 +107,9 @@ function resultHandler(err, result){
 		var data = result.data.reverse();
 		for(var i = 0;i < data.length; i++){
 			var tweet = new Tweet(data[i], screen_name, dm);
+			if(obj.words){
+				Logger.WORDS_PER_LINE = obj.words;
+			}
 			tweet.display(Logger);
 		}
 	}

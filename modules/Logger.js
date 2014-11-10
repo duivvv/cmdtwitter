@@ -38,7 +38,21 @@ Logger.content = function(content, my_screen_name){
 		}
 	});
 	content = content.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, Logger.URL("$1"));
-	Logger.log(content);
+	var words = content.split(" ");
+	var line = "";
+	if(Logger.WORDS_PER_LINE){
+		for(var i = 1;i <= words.length;i++){
+			line += words[i-1] + " ";
+			if(i % Logger.WORDS_PER_LINE === 0 && i !== 0){
+				Logger.log(line);
+				line = "";
+			}else if(i === words.length){
+				Logger.log(line);
+			}
+		}
+	}else{
+		Logger.log(content);
+	}
 }
 
 Logger.screen_name = function(screen_name, my_screen_name){

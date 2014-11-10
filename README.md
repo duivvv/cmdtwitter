@@ -47,6 +47,7 @@ Usage
 -d, --directmessages   flag to display direct messages
 -h, --home             flag to display your timeline, default action
 -l, --limit <number>   limit results of query, default 15
+-w, --words <number>   words per line
 --help                 show help
 
 ```
