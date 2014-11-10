@@ -19,7 +19,7 @@ function _expandURL(id, url, cb){
 		if(err){
 			return cb(err)
 		}
-	  return cb(null, id, original);
+	  return cb(null, id, url, original);
 	});
 }
 
@@ -27,13 +27,13 @@ function _processURL(data, cb){
 	if(this.expand){
 		for(var i = 0; i < data.length; i++){
 			var regex = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
-			var match = regex.exec(data[i].text);
-			if(match){
+			var match = data[i].text.match(regex);
+			for(var j = 0; j < match.length; j++){
 				API.need_to_expand ++;
-				_expandURL(i, match[0], function(err, id, original){
+				_expandURL(i, match[j], function(err, id, url, original){
 					API.expanded ++;
 					if(!err){
-						data[id].text = data[id].text.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, original);
+						data[id].text = data[id].text.replace(url, original);
 					}
 					if(API.expanded === API.need_to_expand){
 						return cb(data);
