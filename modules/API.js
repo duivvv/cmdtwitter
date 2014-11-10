@@ -121,8 +121,8 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		screen_name = screen_name.substring(1, screen_name.length)
 	}
 	this.client.get('statuses/user_timeline', {
-		screen_name:
-		screen_name, count: limit$
+		screen_name: screen_name,
+		count: limit
 	}, function(err, data, response) {
 		if(err){
 			return cb({
