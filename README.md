@@ -51,7 +51,6 @@ Usage
 -o, --own              flag to display your latest tweets
 -h, --home             flag to display your timeline, default action
 -l, --limit <number>   limit results of query, default 15
--e, --expand           expand urls flag
 -w, --words <number>   words per line, default 12
 --help                 show help
 
@@ -108,3 +107,4 @@ Tweets are displayed in reverse order (newest ones last).
 
 * make environment variables step interactive (--set KEY_NAME --key ...)
 * marking search results
+* fix url expanding

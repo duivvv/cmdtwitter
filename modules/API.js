@@ -23,21 +23,23 @@ function _processData(data, cb){
 
 	for(var i = 0; i < data.length; i++){
 		var expander = new TwitterExpandURL();
-		expander.expand(i, data[i], {force: false}, function(err, results){
+		expander.expand(i, data[i], {force: false}, function(err, id, results){
 			if(err){
 				return cb({msg: err.msg})
 			}
-			if(results){
-				console.log(results);
+			if(results && results.length > 0){
+				for(var i = 0;i < results.length; i++){
+					var result = results[i];
+					data[id].text = data[id].text.replace(result.url, result.expanded_url);
+				}
 			}
 			API.expanded ++;
 			if(API.total_expand === API.expanded){
-				console.log("DONE", API.total_expand, API.expanded);
+				return cb(null, data);
 			}
 		});
 	}
 
-	return cb(null, data);
 }
 
 API.prototype.tweet = function(status, cb){
