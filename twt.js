@@ -30,7 +30,7 @@ var usage = cli.getUsage({
     footer: ""
 });
 
-var api = new API(process.env, obj.expand);
+var api = new API(process.env);
 
 if(obj.tweet === null || obj.tweet){
 	if(obj.tweet){

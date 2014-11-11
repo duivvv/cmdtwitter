@@ -51,13 +51,6 @@ var args = [
     	description: "limit results of query, default 15"
     },
     {
-    	name: "expand",
-    	alias: "e",
-    	type: Boolean,
-    	value: false,
-    	description: "expand urls flag"
-    },
-    {
     	name: "words",
     	alias: "w",
     	type: Number,

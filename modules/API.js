@@ -1,8 +1,11 @@
 var Twit = require("Twit");
-var expand = require("expand-url");
+var _ = require("lodash");
+var fs = require("fs");
+var Logger
 
-function API(config, expand){
-	this.expand = expand || false;
+var TwitterExpandURL = require("twitter-expand-url");
+
+function API(config){
 	this.client = new Twit({
 		consumer_key: config.TWT_CONSUMER_KEY,
 		consumer_secret: config.TWT_CONSUMER_SECRET,
@@ -11,39 +14,30 @@ function API(config, expand){
 	});
 }
 
-API.need_to_expand = 0;
+API.total_expand = 0;
 API.expanded = 0;
 
-function _expandURL(id, url, cb){
-	expand.expand(url, function(err, original){
-		if(err){
-			return cb(err)
-		}
-	  return cb(null, id, url, original);
-	});
-}
+function _processData(data, cb){
 
-function _processURL(data, cb){
-	if(this.expand){
-		for(var i = 0; i < data.length; i++){
-			var regex = /(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig;
-			var match = data[i].text.match(regex);
-			for(var j = 0; j < match.length; j++){
-				API.need_to_expand ++;
-				_expandURL(i, match[j], function(err, id, url, original){
-					API.expanded ++;
-					if(!err){
-						data[id].text = data[id].text.replace(url, original);
-					}
-					if(API.expanded === API.need_to_expand){
-						return cb(data);
-					}
-				});
+	API.total_expand = data.length;
+
+	for(var i = 0; i < data.length; i++){
+		var expander = new TwitterExpandURL();
+		expander.expand(i, data[i], {force: false}, function(err, results){
+			if(err){
+				return cb({msg: err.msg})
 			}
-		}
-	}else{
-		return cb(data);
+			if(results){
+				console.log(results);
+			}
+			API.expanded ++;
+			if(API.total_expand === API.expanded){
+				console.log("DONE", API.total_expand, API.expanded);
+			}
+		});
 	}
+
+	return cb(null, data);
 }
 
 API.prototype.tweet = function(status, cb){
@@ -81,7 +75,7 @@ API.prototype.search = function(query, limit, cb){
 		if(limit === 1){
 			msg = "displaying last search results for '" + query + "'";
 		}
-		_processURL.call(this, data.statuses, function(data){
+		_processData.call(this, data.statuses, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -104,10 +98,10 @@ API.prototype.home_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet on your timeline";
 		}
-		_processURL.call(this, data, function(data){
+		_processData.call(this, data, function(err, data){
 			return cb(null, {
-					data: data,
-					msg: msg
+				data: data,
+				msg: msg
 			});
 		});
 	}).bind(this));
@@ -127,7 +121,7 @@ API.prototype.mentions_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last mention";
 		}
-		_processURL.call(this, data, function(data){
+		_processData.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -150,7 +144,7 @@ API.prototype.direct_messages = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last direct message";
 		}
-		_processURL.call(this, data, function(data){
+		_processData.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg,
@@ -178,7 +172,7 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet by @" + screen_name;
 		}
-		_processURL.call(this, data, function(data){
+		_processData.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
