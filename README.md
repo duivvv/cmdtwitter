@@ -74,7 +74,7 @@ $ twt t "my tweet"
 display your home timeline
 
 ```bash
-$ twt h
+$ twt
 ```
 
 display your timeline
