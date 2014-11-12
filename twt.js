@@ -3,7 +3,12 @@
 var program = require("commander");
 
 var Tweet = require("./modules/Tweet.js");
+var User = require("./modules/User.js");
+
 var Logger = require("./modules/Logger.js");
+var TweetLogger = require("./modules/TweetLogger.js");
+var UserLogger = require("./modules/UserLogger.js");
+
 var API = require("./modules/API.js");
 
 var params = {};
@@ -22,15 +27,21 @@ var api = new API(process.env);
 
 program
 	.version(version)
-	.usage('cmdtwitter, a command line twitter client \n\n  $ twt {command} <argument> <options>')
+	.usage('- cmdtwitter, a command line twitter client \n\n  $ twt {command} <argument> <options>')
   .option("-l, --limit <limit>", "limit results")
   .option("-w, --words <words>", "words per line");
 
 program
 	.command('home')
 	.alias('h')
-	.description('display your timeline')
+	.description('display your home timeline')
 	.action(home_timeline);
+
+program
+	.command('tweet <status>')
+	.alias('t')
+	.description('tweet a new status')
+	.action(tweet);
 
 program
 	.command('mentions')
@@ -63,10 +74,10 @@ program
 	.action(own_timeline);
 
 program
-	.command('tweet <status>')
-	.alias('t')
-	.description('tweet a new status')
-	.action(tweet);
+	.command('whois <screen_name>')
+	.alias('w')
+	.description('display information on user')
+	.action(whois);
 
 program.parse(process.argv)
 
@@ -103,6 +114,10 @@ function user_timeline(user){
 	api.user_timeline(user, parseOptions(program), result)
 }
 
+function whois(user){
+	api.whois(user, whoisHandler);
+}
+
 function result(err, result){
 	if(err){
 		Logger.fail(err.msg);
@@ -115,9 +130,22 @@ function result(err, result){
 		for(var i = 0;i < data.length; i++){
 			var tweet = new Tweet(data[i], screen_name, dm);
 			if(params.words){
-				Logger.WORDS_PER_LINE = params.words;
+				TweetLogger.WORDS_PER_LINE(params.words);
 			}
-			tweet.display(Logger);
+			tweet.display(TweetLogger);
 		}
 	}
+}
+
+function whoisHandler(err, result){
+	if(err){
+		Logger.fail(err.msg);
+		return;
+	}
+	Logger.divider();
+	if(result.data){
+		var user = new User(result.data, screen_name);
+		user.display(UserLogger, TweetLogger)
+	}
+	Logger.divider();
 }

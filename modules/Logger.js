@@ -1,27 +1,22 @@
 var chalk = require("chalk");
-var moment = require("moment");
 
 function Logger(){
 
 }
 
-Logger.MY_SCREEN_NAME = chalk.bgRed;
-Logger.HASHTAG = chalk.green;
-Logger.MENTION = chalk.cyan;
-Logger.SCREEN_NAME = chalk.bgBlue.white.cyan;
-Logger.URL = chalk.yellow.underline;
-Logger.DATE = chalk.white.underline;
-
 Logger.FAIL = chalk.bgRed;
 Logger.SUCCESS = chalk.bgGreen;
 
-Logger.log = function(message){
-	console.log(message);
-}
+Logger.HASHTAG = chalk.green;
+Logger.MENTION = chalk.cyan;
+Logger.URL = chalk.yellow.underline;
 
-Logger.date = function(date){
-	date = new Date(date);
-	Logger.log(Logger.DATE(moment(date).format('MMMM Do YYYY, HH:mm:ss')));
+Logger.log = function(message, addspaces){
+	addspaces = addspaces || false;
+	if(addspaces){
+		message = " " + message + " ";
+	}
+	console.log(message);
 }
 
 Logger.content = function(content, my_screen_name){
@@ -55,21 +50,20 @@ Logger.content = function(content, my_screen_name){
 	}
 }
 
-Logger.screen_name = function(screen_name, my_screen_name){
-	if(screen_name === my_screen_name){
-		Logger.log(Logger.MY_SCREEN_NAME(" @" + screen_name + " "))
-	}else{
-		Logger.log(Logger.SCREEN_NAME(" @" + screen_name + " "))
+Logger.divider = function(character){
+	if(character){
+		Logger.log(" " + character + " ");
+		return;
 	}
+	Logger.log(" ");
 }
 
 Logger.fail = function(message){
-	Logger.log("\n" + Logger.FAIL(" " + message + " ") + "\n");
+	Logger.log("\n" + Logger.FAIL(message, true) + "\n");
 }
 
 Logger.success = function(message){
-	Logger.log("\n" + Logger.SUCCESS(" " + message + " ") + "\n");
+	Logger.log("\n" + Logger.SUCCESS(message, true) + "\n");
 }
-
 
 module.exports = Logger;

@@ -59,6 +59,23 @@ API.prototype.tweet = function(status, cb){
 	});
 }
 
+API.prototype.whois = function(screen_name, cb){
+	this.client.get('users/show', {
+		screen_name: screen_name
+	},(function(err, data, response) {
+		if(err){
+			return cb({
+				msg: "could not get information on user " + screen_name + " / " + err.message
+			});
+		}
+		var msg = "displaying information on " + screen_name;
+		return cb(null, {
+			data: data,
+			msg: msg
+		});
+	}).bind(this));
+}
+
 API.prototype.search = function(query, limit, cb){
 	limit = limit || 15;
 	this.client.get('search/tweets', {

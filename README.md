@@ -37,25 +37,26 @@ export TWT_SCREEN_NAME=<screen_name>
 
 ```bash
 
-Usage: twt cmdtwitter, a command line twitter client
+Usage: twt - cmdtwitter, a command line twitter client
 
 $ twt {command} <argument> <options>
 
 Commands:
 
-  home|h                   display your timeline
+  home|h                   display your home timeline
+  tweet|t <status>         tweet a new status
   mentions|m               display your mentions
   directmesssages|d        display your direct messages
   search|s <search_query>  search tweets by query
   user|u <screen_name>     display timeline of user
   own|o                    display your timeline
-  tweet|t <status>         tweet a new status
+  whois|w <screen_name>    display information on user
 
 Options:
 
-  -h, --help                    output usage information
-  -V, --version                 output the version number
-  -l, --limit <limit>           limit results
+  -h, --help           output usage information
+  -V, --version        output the version number
+  -l, --limit <limit>  limit results
   -w, --words <words>  words per line
 
 ```
@@ -68,41 +69,47 @@ tweet a new status
 $ twt t "my tweet"
 ```
 
-show my home timeline
+display your home timeline
 
 ```bash
 $ twt h
 ```
 
-show my latest tweets
+display your timeline
 
 ```bash
 $ twt o
 ```
 
-show my mentions
+display your mentions
 
 ```bash
 $ twt m
 ```
 
-get tweets by user *@devine_howest*
+display your direct messages
+
+```bash
+$ twt d
+```
+
+display timeline of user, in this example *@devine_howest*
 
 ```bash
 $ twt u "devine_howest"
 ```
 
-get all tweets with hashtag *#devinehowest* (first example shows 50, default is 15)
+search tweets by query, in this example *#devinehowest* (first example shows 50, default is 15)
 
 ```bash
 $ twt s "#devinehowest" -l 50
 $ twt s "#devinehowest"
 ```
 
-show my direct messages
+display information on user
 
 ```bash
-$ twt d
+$ twt w "duivvv"
 ```
 
 Tweets are displayed in reverse order (newest ones last).
