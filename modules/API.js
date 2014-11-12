@@ -60,16 +60,19 @@ API.prototype.tweet = function(status, cb){
 }
 
 API.prototype.follow = function(screen_name, cb){
+	if(screen_name.indexOf("@") === 0){
+		screen_name = screen_name.substring(1, screen_name.length)
+	}
 	this.client.post('friendships/create', {
 		screen_name: screen_name
 	}, function(err, data, response) {
 		if(err){
-			return cb({msg: "could not follow " + screen_name +" / " + err.message});
+			return cb({msg: "could not follow @" + screen_name +" / " + err.message});
 		}
 		if(data){
 			var msg = "following " + screen_name;
 			if(data.follow_request_sent){
-				msg = "request sent to " + screen_name
+				msg = "request sent to @" + screen_name
 			}
 			return cb(null, {
 				msg: msg
@@ -79,30 +82,36 @@ API.prototype.follow = function(screen_name, cb){
 }
 
 API.prototype.unfollow = function(screen_name, cb){
+	if(screen_name.indexOf("@") === 0){
+		screen_name = screen_name.substring(1, screen_name.length)
+	}
 	this.client.post('friendships/destroy', {
 		screen_name: screen_name
 	}, function(err, data, response) {
 		if(err){
-			return cb({msg: "could not unfollow " + screen_name +" / " + err.message});
+			return cb({msg: "could not unfollow @" + screen_name +" / " + err.message});
 		}
 		if(data){
 			return cb(null, {
-				msg: "unfollowed " + screen_name
+				msg: "unfollowed @" + screen_name
 			});
 		}
 	});
 }
 
 API.prototype.whois = function(screen_name, cb){
+	if(screen_name.indexOf("@") === 0){
+		screen_name = screen_name.substring(1, screen_name.length)
+	}
 	this.client.get('users/show', {
 		screen_name: screen_name
 	},(function(err, data, response) {
 		if(err){
 			return cb({
-				msg: "could not get information on user " + screen_name + " / " + err.message
+				msg: "could not get information on user @" + screen_name + " / " + err.message
 			});
 		}
-		var msg = "displaying information on " + screen_name;
+		var msg = "displaying information on @" + screen_name;
 		return cb(null, {
 			data: data,
 			msg: msg
