@@ -2,22 +2,18 @@ var chalk = require("chalk");
 var moment = require("moment");
 
 var Logger = require("./Logger.js");
+Logger.init();
+
+var config_logger = require("./config_logger.js");
+var config = require("../config/logger.json");
 
 function UserLogger(){
 
 }
 
-UserLogger.FOLLOWING = chalk.bgGreen;
-UserLogger.NOT_FOLLOWING = chalk.bgRed;
-UserLogger.REQUESTED = chalk.bgYellow;
-
-UserLogger.STATS = chalk.bgWhite.black;
-UserLogger.LAST_TWEET = chalk.bgMagenta;
-
-UserLogger.DATE = chalk.white.underline;
-
-UserLogger.MY_SCREEN_NAME = Logger.MY_SCREEN_NAME;
-UserLogger.SCREEN_NAME = chalk.bgBlue.white.cyan;
+UserLogger.init = function(){
+	config_logger(UserLogger, config);
+}
 
 UserLogger.divider = Logger.divider;
 UserLogger.content = Logger.content;

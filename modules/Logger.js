@@ -1,17 +1,15 @@
 var chalk = require("chalk");
 
+var config_logger = require("./config_logger.js");
+var config = require("../config/logger.json");
+
 function Logger(){
 
 }
 
-Logger.FAIL = chalk.bgRed;
-Logger.SUCCESS = chalk.bgGreen;
-
-Logger.HASHTAG = chalk.green;
-Logger.MENTION = chalk.cyan;
-Logger.URL = chalk.yellow.underline;
-
-Logger.MY_SCREEN_NAME = chalk.bgRed;
+Logger.init = function(){
+	config_logger(Logger, config);
+}
 
 Logger.log = function(message, addspaces){
 	addspaces = addspaces || false;
@@ -22,6 +20,7 @@ Logger.log = function(message, addspaces){
 }
 
 Logger.content = function(content, my_screen_name){
+	content = content.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, Logger.URL("$1"));
 	content = content.replace(/#(\S*)/g, Logger.HASHTAG("#$1"));
 	content = content.replace(/@(\S*)/g, function(match){
 		if(match === "@"){
@@ -34,7 +33,6 @@ Logger.content = function(content, my_screen_name){
 			return Logger.MENTION(match);
 		}
 	});
-	content = content.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, Logger.URL("$1"));
 	var words = content.split(" ");
 	var line = "";
 	if(Logger.WORDS_PER_LINE){

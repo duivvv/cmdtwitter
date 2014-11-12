@@ -6,8 +6,13 @@ var Tweet = require("./modules/Tweet.js");
 var User = require("./modules/User.js");
 
 var Logger = require("./modules/Logger.js");
+Logger.init();
+
 var TweetLogger = require("./modules/TweetLogger.js");
+TweetLogger.init();
+
 var UserLogger = require("./modules/UserLogger.js");
+UserLogger.init();
 
 var API = require("./modules/API.js");
 
@@ -80,6 +85,10 @@ program
 	.action(whois);
 
 program.parse(process.argv)
+
+if(program.args){
+	home_timeline();
+}
 
 function parseOptions(program){
 	params.words = parseInt(program.words) || 12;

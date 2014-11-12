@@ -2,19 +2,22 @@ var chalk = require("chalk");
 var moment = require("moment");
 
 var Logger = require("./Logger.js");
+Logger.init();
+
+var config_logger = require("./config_logger.js");
+var config = require("../config/logger.json");
 
 function TweetLogger(){
 
 }
 
+TweetLogger.init = function(){
+	config_logger(TweetLogger, config);
+}
+
 TweetLogger.WORDS_PER_LINE = function(WORDS_PER_LINE){
 	Logger.WORDS_PER_LINE = WORDS_PER_LINE;
 };
-
-TweetLogger.SCREEN_NAME = chalk.bgBlue.white.cyan;
-TweetLogger.MY_SCREEN_NAME = Logger.MY_SCREEN_NAME;
-
-TweetLogger.DATE = chalk.white.underline;
 
 TweetLogger.divider = Logger.divider;
 TweetLogger.content = Logger.content;
