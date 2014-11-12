@@ -1,5 +1,3 @@
-var chalk = require("chalk");
-
 var config_logger = require("./config_logger.js");
 var config = require("../config/logger.json");
 

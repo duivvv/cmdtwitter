@@ -1,4 +1,3 @@
-var chalk = require("chalk");
 var moment = require("moment");
 
 var Logger = require("./Logger.js");
