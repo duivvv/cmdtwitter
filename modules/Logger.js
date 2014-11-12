@@ -59,11 +59,11 @@ Logger.divider = function(character){
 }
 
 Logger.fail = function(message){
-	Logger.log("\n" + Logger.FAIL(message, true) + "\n");
+	Logger.log("\n" + Logger.FAIL(" " + message + " ") + "\n");
 }
 
 Logger.success = function(message){
-	Logger.log("\n" + Logger.SUCCESS(message, true) + "\n");
+	Logger.log("\n" + Logger.SUCCESS(" " + message + " ") + "\n");
 }
 
 module.exports = Logger;

@@ -39,7 +39,7 @@ program
 program
 	.command('home')
 	.alias('h')
-	.description('display your home timeline')
+	.description('display your home timeline, default action')
 	.action(home_timeline);
 
 program
@@ -77,6 +77,18 @@ program
 	.alias('o')
 	.description('display your timeline')
 	.action(own_timeline);
+
+program
+	.command('follow <screen_name>')
+	.alias('f')
+	.description('follow or request to follow a user')
+	.action(follow);
+
+program
+	.command('unfollow <screen_name>')
+	.alias('uf')
+	.description('unfollow a user')
+	.action(unfollow);
 
 program
 	.command('whois <screen_name>')
@@ -119,8 +131,16 @@ function own_timeline(){
 	user_timeline(screen_name);
 }
 
-function user_timeline(user){
-	api.user_timeline(user, parseOptions(program), result)
+function user_timeline(screen_name){
+	api.user_timeline(screen_name, parseOptions(program), result)
+}
+
+function follow(screen_name){
+	api.follow(screen_name, result)
+}
+
+function unfollow(screen_name){
+	api.unfollow(screen_name, result)
 }
 
 function whois(user){

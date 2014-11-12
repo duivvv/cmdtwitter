@@ -43,14 +43,16 @@ $ twt {command} <argument> <options>
 
 Commands:
 
-  home|h                   display your home timeline
-  tweet|t <status>         tweet a new status
-  mentions|m               display your mentions
-  directmesssages|d        display your direct messages
-  search|s <search_query>  search tweets by query
-  user|u <screen_name>     display timeline of user
-  own|o                    display your timeline
-  whois|w <screen_name>    display information on user
+  home|h                     display your home timeline, default action
+  tweet|t <status>           tweet a new status
+  mentions|m                 display your mentions
+  directmesssages|d          display your direct messages
+  search|s <search_query>    search tweets by query
+  user|u <screen_name>       display timeline of user
+  own|o                      display your timeline
+  follow|f <screen_name>     follow or request to follow a user
+  unfollow|uf <screen_name>  unfollow a user
+  whois|w <screen_name>      display information on user
 
 Options:
 
@@ -110,6 +112,18 @@ display information on user
 
 ```bash
 $ twt w "duivvv"
+```
+
+follow a user
+
+```bash
+$ twt f "duivvv"
+```
+
+unfollow a user
+
+```bash
+$ twt uf "GeorgeWBush"
 ```
 
 Tweets are displayed in reverse order (newest ones last).

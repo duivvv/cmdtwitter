@@ -59,6 +59,40 @@ API.prototype.tweet = function(status, cb){
 	});
 }
 
+API.prototype.follow = function(screen_name, cb){
+	this.client.post('friendships/create', {
+		screen_name: screen_name
+	}, function(err, data, response) {
+		if(err){
+			return cb({msg: "could not follow " + screen_name +" / " + err.message});
+		}
+		if(data){
+			var msg = "following " + screen_name;
+			if(data.follow_request_sent){
+				msg = "request sent to " + screen_name
+			}
+			return cb(null, {
+				msg: msg
+			});
+		}
+	});
+}
+
+API.prototype.unfollow = function(screen_name, cb){
+	this.client.post('friendships/destroy', {
+		screen_name: screen_name
+	}, function(err, data, response) {
+		if(err){
+			return cb({msg: "could not unfollow " + screen_name +" / " + err.message});
+		}
+		if(data){
+			return cb(null, {
+				msg: "unfollowed " + screen_name
+			});
+		}
+	});
+}
+
 API.prototype.whois = function(screen_name, cb){
 	this.client.get('users/show', {
 		screen_name: screen_name
@@ -87,7 +121,7 @@ API.prototype.search = function(query, limit, cb){
 				msg: "could not get tweets / " + err.message
 			});
 		}
-		var msg = "displaying " + limit + " latest search results for '" + query + "'";
+		var msg = "displaying " + limit + " latest search results for \"" + query + "\"";
 		if(limit === 1){
 			msg = "displaying last search result for '" + query + "'";
 		}
