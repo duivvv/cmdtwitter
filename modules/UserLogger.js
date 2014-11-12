@@ -12,7 +12,7 @@ UserLogger.NOT_FOLLOWING = chalk.bgRed;
 UserLogger.REQUESTED = chalk.bgYellow;
 
 UserLogger.STATS = chalk.bgWhite.black;
-UserLogger.LAST_TWEET = UserLogger.STATS;
+UserLogger.LAST_TWEET = chalk.bgMagenta;
 
 UserLogger.DATE = chalk.white.underline;
 
