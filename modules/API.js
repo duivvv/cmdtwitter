@@ -67,7 +67,13 @@ API.prototype.follow = function(screen_name, cb){
 		screen_name: screen_name
 	}, function(err, data, response) {
 		if(err){
-			return cb({msg: "could not follow @" + screen_name +" / " + err.message});
+			var msg = "could not follow @" + screen_name +" / " + err.message
+			if(err.statusCode === 403){
+				msg = "user @" + screen_name + " does not exist";
+			}
+			return cb({
+				msg: msg
+			});
 		}
 		if(data){
 			var msg = "following " + screen_name;
@@ -107,8 +113,12 @@ API.prototype.whois = function(screen_name, cb){
 		screen_name: screen_name
 	},(function(err, data, response) {
 		if(err){
+			var msg = "could not get information on user @" + screen_name + " / " + err.message
+			if(err.statusCode === 404){
+				msg = "user @" + screen_name + " does not exist";
+			}
 			return cb({
-				msg: "could not get information on user @" + screen_name + " / " + err.message
+				msg: msg
 			});
 		}
 		var msg = "displaying information on @" + screen_name;
@@ -189,6 +199,35 @@ API.prototype.mentions_timeline = function(limit, cb){
 	}).bind(this));
 }
 
+API.prototype.list_timeline = function(screen_name, list_name, limit, cb){
+	limit = limit || 15;
+	this.client.get('lists/statuses', {
+		owner_screen_name: screen_name,
+		slug: list_name,
+		count: limit
+	}, (function(err, data, response) {
+		if(err){
+			var msg = "could not get list \"" +  list_name + "\" / " + err.message
+			if(err.statusCode === 404){
+				msg = "list \"" + list_name + "\" does not exist";
+			}
+			return cb({
+				msg: msg
+			});
+		}
+		var msg = "displaying " + limit + " latest tweets in \"" + list_name + "\" list";
+		if(limit === 1){
+			msg = "displaying last tweet in \"" + list_name + "\" list";
+		}
+		_processData.call(this, data, function(err, data){
+			return cb(null, {
+				data: data,
+				msg: msg
+			});
+		});
+	}).bind(this));
+}
+
 API.prototype.direct_messages = function(limit, cb){
 	limit = limit || 15;
 	this.client.get('direct_messages', {
@@ -223,8 +262,12 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		count: limit
 	}, (function(err, data, response) {
 		if(err){
+			var msg = "could not get tweets of user @" + screen_name + " / " + err.message
+			if(err.statusCode === 404){
+				msg = "user @" + screen_name + " does not exist";
+			}
 			return cb({
-				msg: "could not get tweets of user " + screen_name + " / " + err.message
+				msg: msg
 			});
 		}
 		var msg = "displaying last " + limit + " tweets by @" + screen_name;

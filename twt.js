@@ -67,6 +67,12 @@ program
 	.action(search);
 
 program
+	.command('list <list_name>')
+	.alias('l')
+	.description('display tweets in list')
+	.action(list_timeline);
+
+program
 	.command('user <screen_name>')
 	.alias('u')
 	.description('display timeline of user')
@@ -133,6 +139,10 @@ function own_timeline(){
 
 function user_timeline(screen_name){
 	api.user_timeline(screen_name, parseOptions(program), result)
+}
+
+function list_timeline(list_name){
+	api.list_timeline(screen_name, list_name, parseOptions(program), result)
 }
 
 function follow(screen_name){

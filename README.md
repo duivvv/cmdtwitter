@@ -31,7 +31,7 @@ export TWT_SCREEN_NAME=<screen_name>
 * restart your terminal
 * done.
 
-*please be aware that most API calls are rate limited*
+*please be aware that most API calls are [rate limited](https://dev.twitter.com/rest/public/rate-limits)*
 
 ## usage
 
@@ -48,6 +48,7 @@ Commands:
   mentions|m                 display your mentions
   directmesssages|d          display your direct messages
   search|s <search_query>    search tweets by query
+  list|l <list_name>         display tweets in list
   user|u <screen_name>       display timeline of user
   own|o                      display your timeline
   follow|f <screen_name>     follow or request to follow a user
@@ -124,6 +125,12 @@ unfollow a user
 
 ```bash
 $ twt uf "GeorgeWBush"
+```
+
+display timeline of one of your lists
+
+```bash
+$ twt l "cycling"
 ```
 
 Tweets are displayed in reverse order (newest ones last).
