@@ -86,7 +86,7 @@ program
 
 program.parse(process.argv)
 
-if(program.args){
+if(program.args && program.args.length === 0){
 	home_timeline();
 }
 
