@@ -11,6 +11,8 @@ Logger.HASHTAG = chalk.green;
 Logger.MENTION = chalk.cyan;
 Logger.URL = chalk.yellow.underline;
 
+Logger.MY_SCREEN_NAME = chalk.bgRed;
+
 Logger.log = function(message, addspaces){
 	addspaces = addspaces || false;
 	if(addspaces){
@@ -27,7 +29,7 @@ Logger.content = function(content, my_screen_name){
 		}
 		//check if mention screen_name
 		if(match === "@" + my_screen_name){
-			return Logger.MY_SCREEN_NAME(match);
+			return Logger.MY_SCREEN_NAME(" " + match + " ");
 		}else{
 			return Logger.MENTION(match);
 		}

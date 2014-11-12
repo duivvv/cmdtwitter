@@ -16,7 +16,7 @@ UserLogger.LAST_TWEET = chalk.bgMagenta;
 
 UserLogger.DATE = chalk.white.underline;
 
-UserLogger.MY_SCREEN_NAME = chalk.bgRed;
+UserLogger.MY_SCREEN_NAME = Logger.MY_SCREEN_NAME;
 UserLogger.SCREEN_NAME = chalk.bgBlue.white.cyan;
 
 UserLogger.divider = Logger.divider;

@@ -14,9 +14,10 @@ User.prototype.display = function(Logger, TweetLogger){
 		Logger.status(this.obj.following, this.obj.follow_request_sent);
 	}
 
-	Logger.divider();
-
-	Logger.content(this.obj.description);
+	if(this.obj.description){
+		Logger.divider();
+		Logger.content(this.obj.description);
+	}
 
 	if(this.obj.location){
 		Logger.divider();
@@ -27,15 +28,20 @@ User.prototype.display = function(Logger, TweetLogger){
 
 	Logger.stats(this.obj.statuses_count, this.obj.followers_count, this.obj.friends_count);
 
-	Logger.divider();
+	if(this.obj.status){
 
-	this.obj.status.user = {};
-	this.obj.status.user.screen_name = this.obj.screen_name;
+		Logger.divider();
+		this.obj.status.user = {};
+		this.obj.status.user.screen_name = this.obj.screen_name;
 
-	Logger.last_tweet();
+		Logger.last_tweet();
 
-	var tweet = new Tweet(this.obj.status, false, false);
-	tweet.display(TweetLogger);
+		var tweet = new Tweet(this.obj.status, false, false);
+		tweet.display(TweetLogger);
+
+	}else{
+		Logger.divider();
+	}
 
 	Logger.registered(this.obj.created_at);
 

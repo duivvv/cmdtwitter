@@ -11,8 +11,9 @@ TweetLogger.WORDS_PER_LINE = function(WORDS_PER_LINE){
 	Logger.WORDS_PER_LINE = WORDS_PER_LINE;
 };
 
-TweetLogger.MY_SCREEN_NAME = chalk.bgRed;
 TweetLogger.SCREEN_NAME = chalk.bgBlue.white.cyan;
+TweetLogger.MY_SCREEN_NAME = Logger.MY_SCREEN_NAME;
+
 TweetLogger.DATE = chalk.white.underline;
 
 TweetLogger.divider = Logger.divider;
