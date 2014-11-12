@@ -1,7 +1,4 @@
 var Twit = require("Twit");
-var _ = require("lodash");
-var fs = require("fs");
-var Logger
 
 var TwitterExpandURL = require("twitter-expand-url");
 
@@ -75,7 +72,7 @@ API.prototype.search = function(query, limit, cb){
 		}
 		var msg = "displaying " + limit + " latest search results for '" + query + "'";
 		if(limit === 1){
-			msg = "displaying last search results for '" + query + "'";
+			msg = "displaying last search result for '" + query + "'";
 		}
 		_processData.call(this, data.statuses, function(err, data){
 			return cb(null, {

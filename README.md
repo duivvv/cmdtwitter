@@ -37,22 +37,26 @@ export TWT_SCREEN_NAME=<screen_name>
 
 ```bash
 
-cmdtwitter, a command line twitter client
+Usage: twt cmdtwitter, a command line twitter client
 
-$ twt {arguments} <content>
+$ twt {command} <argument> <options>
 
-Usage
+Commands:
 
--t, --tweet <string>   status to tweet
--s, --search <string>  search query
--m, --mentions         flag to display mentions
--d, --directmessages   flag to display direct messages
--u, --user <string>    user to display timeline, @ is not needed
--o, --own              flag to display your latest tweets
--h, --home             flag to display your timeline, default action
--l, --limit <number>   limit results of query, default 15
--w, --words <number>   words per line, default 12
---help                 show help
+  home|h                   display your timeline
+  mentions|m               display your mentions
+  directmesssages|d        display your direct messages
+  search|s <search_query>  search tweets by query
+  user|u <screen_name>     display timeline of user
+  own|o                    display your timeline
+  tweet|t <status>         tweet a new status
+
+Options:
+
+  -h, --help                    output usage information
+  -V, --version                 output the version number
+  -l, --limit <limit>           limit results
+  -w, --words <words>  words per line
 
 ```
 
@@ -61,44 +65,44 @@ Usage
 tweet a new status
 
 ```bash
-$ twt -t "my tweet"
+$ twt t "my tweet"
 ```
 
-show my timeline
+show my home timeline
 
 ```bash
-$ twt
+$ twt h
 ```
 
 show my latest tweets
 
 ```bash
-$ twt -o
+$ twt o
 ```
 
 show my mentions
 
 ```bash
-$ twt -m
+$ twt m
 ```
 
 get tweets by user *@devine_howest*
 
 ```bash
-$ twt -u "devine_howest"
+$ twt u "devine_howest"
 ```
 
 get all tweets with hashtag *#devinehowest* (first example shows 50, default is 15)
 
 ```bash
-$ twt -s "#devinehowest" -l 50
-$ twt -s "#devinehowest"
+$ twt s "#devinehowest" -l 50
+$ twt s "#devinehowest"
 ```
 
 show my direct messages
 
 ```bash
-$ twt -d
+$ twt d
 ```
 
 Tweets are displayed in reverse order (newest ones last).
