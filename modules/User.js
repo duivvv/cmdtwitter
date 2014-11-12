@@ -5,7 +5,7 @@ function User(obj, my_screen_name){
 	this.my_screen_name = my_screen_name || "";
 }
 
-User.prototype.display = function(Logger, TweetLogger){
+User.prototype.display = function(entities, Logger, TweetLogger){
 
 	Logger.screen_name(this.obj.screen_name, this.obj.verified, this.my_screen_name);
 
@@ -16,7 +16,7 @@ User.prototype.display = function(Logger, TweetLogger){
 
 	if(this.obj.description){
 		Logger.divider();
-		Logger.content(this.obj.description);
+		Logger.content(entities.decode(this.obj.description));
 	}
 
 	if(this.obj.location){
@@ -37,7 +37,7 @@ User.prototype.display = function(Logger, TweetLogger){
 		Logger.last_tweet();
 
 		var tweet = new Tweet(this.obj.status, false, false);
-		tweet.display(TweetLogger);
+		tweet.display(entities, TweetLogger);
 
 	}else{
 		Logger.divider();

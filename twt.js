@@ -2,6 +2,9 @@
 
 var program = require("commander");
 
+var Entities = require('html-entities').AllHtmlEntities;
+var entities = new Entities();
+
 var Tweet = require("./modules/Tweet.js");
 var User = require("./modules/User.js");
 
@@ -171,7 +174,7 @@ function result(err, result){
 			if(params.words){
 				TweetLogger.WORDS_PER_LINE(params.words);
 			}
-			tweet.display(TweetLogger);
+			tweet.display(entities, TweetLogger);
 		}
 	}
 }
@@ -184,7 +187,7 @@ function whoisHandler(err, result){
 	Logger.divider();
 	if(result.data){
 		var user = new User(result.data, screen_name);
-		user.display(UserLogger, TweetLogger)
+		user.display(entities, UserLogger, TweetLogger)
 	}
 	Logger.divider();
 }
