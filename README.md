@@ -57,10 +57,11 @@ Commands:
 
 Options:
 
-  -h, --help           output usage information
-  -V, --version        output the version number
-  -l, --limit <limit>  limit results
-  -w, --words <words>  words per line
+  -h, --help             output usage information
+  -V, --version          output the version number
+  -l, --limit <limit>    limit results
+  -w, --words <words>    words per line
+  -e, --exclude <flags>  exclude tweets, pass r|replies or/and rt|retweets, comma separated
 
 ```
 
@@ -139,4 +140,5 @@ Tweets are displayed in reverse order (newest ones last).
 
 * make environment variables step interactive (--set KEY_NAME --key ...)
 * marking search results
-* fix url expanding
+* better url expanding
+* better colouring (email - mention, hashtag - url problems)

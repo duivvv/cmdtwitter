@@ -1,6 +1,6 @@
 {
   "name": "cmdtwitter",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "command line twitter client",
   "main": "twt.js",
   "bin": {

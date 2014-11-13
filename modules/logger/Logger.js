@@ -21,7 +21,7 @@ Logger.content = function(content, my_screen_name){
 			return match;
 		}
 		//check if mention screen_name
-		if(match === "@" + my_screen_name){
+		if(match === "@" + my_screen_name + ""){
 			return Logger.COLORS.MY_SCREEN_NAME(" " + match + " ");
 		}else{
 			return Logger.COLORS.MENTION(match);

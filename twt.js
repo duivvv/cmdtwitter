@@ -6,31 +6,72 @@ var version = require("./package.json").version;
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
 
-var Tweet = require("./modules/Tweet.js");
-var User = require("./modules/User.js");
+var Tweet = require("./modules/models/Tweet.js");
+var User = require("./modules/models/User.js");
 
-var API = require("./modules/API.js");
+var API = require("./modules/helpers/API.js");
 
 require("dotenv").load();
 var api = new API(process.env);
 
-var Colors = require("./modules/Colors.js");
+var Colors = require("./modules/helpers/Colors.js");
 var config = require("./config/logger.json");
 
 var colors = new Colors(config);
 
-var Logger = require("./modules/Logger.js");
+var Logger = require("./modules/logger/Logger.js");
 Logger.SET_COLORS(colors);
 
-var TweetLogger = require("./modules/TweetLogger.js");
+var TweetLogger = require("./modules/logger/TweetLogger.js");
 TweetLogger.SET_COLORS(colors);
 
-var UserLogger = require("./modules/UserLogger.js");
+var UserLogger = require("./modules/logger/UserLogger.js");
 UserLogger.SET_COLORS(colors);
 
-
-var params = {};
 var screen_name = process.env.TWT_SCREEN_NAME;
+
+function _parse_options(program){
+	var params = {}
+	params.words = parseInt(program.words) || 12;
+	params.limit = parseInt(program.limit) || 15
+	params.replies = true;
+	params.retweets = true;
+	if(program.exclude){
+		var excludes = _parse_exclude(program.exclude);
+		params.replies = excludes.replies;
+		params.retweets = excludes.retweets;
+	}
+	return params
+}
+
+function _check_flag(flag){
+	if(flag === "rt" || flag === "retweets"){
+		return "retweets"
+	}else if(flag === "r" || flag === "replies"){
+		return "replies";
+	}
+	return false;
+}
+
+function _parse_exclude(exclude){
+	var obj = {retweets: true, replies: true};
+	exclude = exclude.split(" ").join("");
+	if(exclude.indexOf(",") > 0){
+		var flags = exclude.split(",");
+		for(var i = 0;i < flags.length;i++){
+			var flag = _check_flag(flags[i])
+			if(flag){
+				obj[flag] = false;
+			}
+		}
+	}else{
+		var flag = _check_flag(exclude);
+		if(flag){
+			obj[flag] = false;
+		}
+	}
+	return obj;
+}
 
 if(screen_name.indexOf("@") === 0){
 	screen_name = screen_name.substring(1, screen_name.length);
@@ -40,7 +81,8 @@ program
 	.version(version)
 	.usage('- cmdtwitter, a command line twitter client \n\n  $ twt {command} <argument> <options>')
   .option("-l, --limit <limit>", "limit results")
-  .option("-w, --words <words>", "words per line");
+  .option("-w, --words <words>", "words per line")
+  .option("-e, --exclude <flags>", "exclude tweets, pass r|replies or/and rt|retweets, comma separated");
 
 program
 	.command('home')
@@ -108,15 +150,14 @@ program
 	.description('display information on user')
 	.action(whois);
 
-program.parse(process.argv)
+program.parse(process.argv);
+
+var params = {};
+
+Logger.WORDS_PER_LINE = params.words;
 
 if(program.args && program.args.length === 0){
 	home_timeline();
-}
-
-function parseOptions(program){
-	params.words = parseInt(program.words) || 12;
-	return parseInt(program.limit) || 15;
 }
 
 function tweet(status){
@@ -124,31 +165,38 @@ function tweet(status){
 }
 
 function search(query){
-	api.search(query, parseOptions(program), result)
+	params = _parse_options(program);
+	api.search(query, params, result)
 }
 
 function home_timeline(){
-	api.home_timeline(parseOptions(program), result);
+	params = _parse_options(program);
+	api.home_timeline(params, result);
 }
 
 function mentions_timeline(){
-	api.mentions_timeline(parseOptions(program), result);
+	params = _parse_options(program);
+	api.mentions_timeline(params, result);
 }
 
 function direct_messages(){
-	api.direct_messages(parseOptions(program), result);
+	params = _parse_options(program);
+	api.direct_messages(params, result);
 }
 
 function own_timeline(){
+	params = _parse_options(program);
 	user_timeline(screen_name);
 }
 
 function user_timeline(screen_name){
-	api.user_timeline(screen_name, parseOptions(program), result)
+	params = _parse_options(program);
+	api.user_timeline(screen_name, params, result)
 }
 
 function list_timeline(list_name){
-	api.list_timeline(screen_name, list_name, parseOptions(program), result)
+	params = _parse_options(program);
+	api.list_timeline(screen_name, list_name, params, result)
 }
 
 function follow(screen_name){
@@ -174,9 +222,6 @@ function result(err, result){
 		var data = result.data.reverse();
 		for(var i = 0;i < data.length; i++){
 			var tweet = new Tweet(data[i], screen_name, dm);
-			if(params.words){
-				TweetLogger.WORDS_PER_LINE(params.words);
-			}
 			tweet.display(entities, TweetLogger);
 		}
 	}
