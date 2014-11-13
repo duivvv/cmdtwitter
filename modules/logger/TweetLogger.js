@@ -6,7 +6,7 @@ function TweetLogger(){
 
 }
 
-TweetLogger.WORDS_PER_LINE = function(WORDS_PER_LINE){
+TweetLogger.SET_WORDS_PER_LINE = function(WORDS_PER_LINE){
 	Logger.WORDS_PER_LINE = WORDS_PER_LINE;
 };
 

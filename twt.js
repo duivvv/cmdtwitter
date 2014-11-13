@@ -83,6 +83,7 @@ program
   .option("-l, --limit <limit>", "limit results")
   .option("-w, --words <words>", "words per line")
   .option("-e, --exclude <flags>", "exclude tweets, pass r|replies or/and rt|retweets, comma separated");
+  //.option("-f, --filter <flags>", "filter tweets, pass r|replies or/and rt|retweets, comma separated");
 
 program
 	.command('home')
@@ -154,8 +155,6 @@ program.parse(process.argv);
 
 var params = {};
 
-Logger.WORDS_PER_LINE = params.words;
-
 if(program.args && program.args.length === 0){
 	home_timeline();
 }
@@ -212,6 +211,9 @@ function whois(user){
 }
 
 function result(err, result){
+	params = _parse_options(program);
+	TweetLogger.SET_WORDS_PER_LINE(params.words);
+	console.log(params.words);
 	if(err){
 		Logger.fail(err.msg);
 		return;
