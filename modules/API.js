@@ -14,7 +14,7 @@ function API(config){
 API.total_expand = 0;
 API.expanded = 0;
 
-function _processData(data, cb){
+function _process_data(data, cb){
 
 	API.total_expand = data.length;
 
@@ -39,6 +39,13 @@ function _processData(data, cb){
 
 }
 
+function _parse_screen_name(screen_name){
+	if(screen_name.indexOf("@") === 0){
+		screen_name = screen_name.substring(1, screen_name.length)
+	}
+	return screen_name;
+}
+
 API.prototype.tweet = function(status, cb){
 	if(status.length > 140){
 		return cb({
@@ -60,9 +67,7 @@ API.prototype.tweet = function(status, cb){
 }
 
 API.prototype.follow = function(screen_name, cb){
-	if(screen_name.indexOf("@") === 0){
-		screen_name = screen_name.substring(1, screen_name.length)
-	}
+	screen_name = _parse_screen_name(screen_name);
 	this.client.post('friendships/create', {
 		screen_name: screen_name
 	}, function(err, data, response) {
@@ -88,9 +93,7 @@ API.prototype.follow = function(screen_name, cb){
 }
 
 API.prototype.unfollow = function(screen_name, cb){
-	if(screen_name.indexOf("@") === 0){
-		screen_name = screen_name.substring(1, screen_name.length)
-	}
+	screen_name = _parse_screen_name(screen_name);
 	this.client.post('friendships/destroy', {
 		screen_name: screen_name
 	}, function(err, data, response) {
@@ -106,16 +109,14 @@ API.prototype.unfollow = function(screen_name, cb){
 }
 
 API.prototype.whois = function(screen_name, cb){
-	if(screen_name.indexOf("@") === 0){
-		screen_name = screen_name.substring(1, screen_name.length)
-	}
+	screen_name = _parse_screen_name(screen_name);
 	this.client.get('users/show', {
 		screen_name: screen_name
 	},(function(err, data, response) {
 		if(err){
-			var msg = "could not get information on user @" + screen_name + " / " + err.message
+			var msg = "could not get information on @" + screen_name + " / " + err.message
 			if(err.statusCode === 404){
-				msg = "user @" + screen_name + " does not exist";
+				msg = "@" + screen_name + " does not exist";
 			}
 			return cb({
 				msg: msg
@@ -140,11 +141,16 @@ API.prototype.search = function(query, limit, cb){
 				msg: "could not get tweets / " + err.message
 			});
 		}
+		if(data.statuses.length === 0){
+			return cb({
+				msg: "no tweets found for \"" + query + "\""
+			});
+		}
 		var msg = "displaying " + limit + " latest search results for \"" + query + "\"";
 		if(limit === 1){
-			msg = "displaying last search result for '" + query + "'";
+			msg = "displaying last search result for \"" + query + "\"";
 		}
-		_processData.call(this, data.statuses, function(err, data){
+		_process_data.call(this, data.statuses, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -167,7 +173,7 @@ API.prototype.home_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet on your timeline";
 		}
-		_processData.call(this, data, function(err, data){
+		_process_data.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -190,7 +196,7 @@ API.prototype.mentions_timeline = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last mention";
 		}
-		_processData.call(this, data, function(err, data){
+		_process_data.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -201,6 +207,7 @@ API.prototype.mentions_timeline = function(limit, cb){
 
 API.prototype.list_timeline = function(screen_name, list_name, limit, cb){
 	limit = limit || 15;
+	screen_name = _parse_screen_name(screen_name);
 	this.client.get('lists/statuses', {
 		owner_screen_name: screen_name,
 		slug: list_name,
@@ -219,7 +226,7 @@ API.prototype.list_timeline = function(screen_name, list_name, limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet in \"" + list_name + "\" list";
 		}
-		_processData.call(this, data, function(err, data){
+		_process_data.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg
@@ -242,7 +249,7 @@ API.prototype.direct_messages = function(limit, cb){
 		if(limit === 1){
 			msg = "displaying last direct message";
 		}
-		_processData.call(this, data, function(err, data){
+		_process_data.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg,
@@ -254,9 +261,7 @@ API.prototype.direct_messages = function(limit, cb){
 
 API.prototype.user_timeline = function(screen_name, limit, cb){
 	limit = limit || 15;
-	if(screen_name.indexOf("@") === 0){
-		screen_name = screen_name.substring(1, screen_name.length)
-	}
+	screen_name = _parse_screen_name(screen_name);
 	this.client.get('statuses/user_timeline', {
 		screen_name: screen_name,
 		count: limit
@@ -264,7 +269,9 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		if(err){
 			var msg = "could not get tweets of user @" + screen_name + " / " + err.message
 			if(err.statusCode === 404){
-				msg = "user @" + screen_name + " does not exist";
+				msg = "@" + screen_name + " does not exist";
+			}else if(err.statusCode === 401){
+				msg = "@" + screen_name + "'s tweets are protected";
 			}
 			return cb({
 				msg: msg
@@ -274,7 +281,12 @@ API.prototype.user_timeline = function(screen_name, limit, cb){
 		if(limit === 1){
 			msg = "displaying last tweet by @" + screen_name;
 		}
-		_processData.call(this, data, function(err, data){
+		if(data.length === 0){
+			return cb({
+				msg: "@" + screen_name + " has no tweets"
+			});
+		}
+		_process_data.call(this, data, function(err, data){
 			return cb(null, {
 				data: data,
 				msg: msg

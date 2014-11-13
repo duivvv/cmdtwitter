@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var program = require("commander");
+var version = require("./package.json").version;
 
 var Entities = require('html-entities').AllHtmlEntities;
 var entities = new Entities();
@@ -8,30 +9,32 @@ var entities = new Entities();
 var Tweet = require("./modules/Tweet.js");
 var User = require("./modules/User.js");
 
-var Logger = require("./modules/Logger.js");
-Logger.init();
-
-var TweetLogger = require("./modules/TweetLogger.js");
-TweetLogger.init();
-
-var UserLogger = require("./modules/UserLogger.js");
-UserLogger.init();
-
 var API = require("./modules/API.js");
 
-var params = {};
-
 require("dotenv").load();
+var api = new API(process.env);
 
+var Colors = require("./modules/Colors.js");
+var config = require("./config/logger.json");
+
+var colors = new Colors(config);
+
+var Logger = require("./modules/Logger.js");
+Logger.SET_COLORS(colors);
+
+var TweetLogger = require("./modules/TweetLogger.js");
+TweetLogger.SET_COLORS(colors);
+
+var UserLogger = require("./modules/UserLogger.js");
+UserLogger.SET_COLORS(colors);
+
+
+var params = {};
 var screen_name = process.env.TWT_SCREEN_NAME;
 
 if(screen_name.indexOf("@") === 0){
 	screen_name = screen_name.substring(1, screen_name.length);
 }
-
-var version = require("./package.json").version;
-
-var api = new API(process.env);
 
 program
 	.version(version)

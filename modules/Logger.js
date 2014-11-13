@@ -1,12 +1,5 @@
-var config_logger = require("./config_logger.js");
-var config = require("../config/logger.json");
-
 function Logger(){
 
-}
-
-Logger.init = function(){
-	config_logger(Logger, config);
 }
 
 Logger.log = function(message, addspaces){
@@ -17,20 +10,24 @@ Logger.log = function(message, addspaces){
 	console.log(message);
 }
 
+Logger.SET_COLORS = function(COLORS){
+	Logger.COLORS = COLORS;
+}
+
 Logger.content = function(content, my_screen_name){
-	content = content.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, Logger.URL("$1"));
-	content = content.replace(/#(\S*)/g, Logger.HASHTAG("#$1"));
+	content = content.replace(/#(\S*)/g, Logger.COLORS.HASHTAG("#$1"));
 	content = content.replace(/@(\S*)/g, function(match){
 		if(match === "@"){
 			return match;
 		}
 		//check if mention screen_name
 		if(match === "@" + my_screen_name){
-			return Logger.MY_SCREEN_NAME(" " + match + " ");
+			return Logger.COLORS.MY_SCREEN_NAME(" " + match + " ");
 		}else{
-			return Logger.MENTION(match);
+			return Logger.COLORS.MENTION(match);
 		}
 	});
+	content = content.replace(/(\b(https?):\/\/[-A-Z0-9+&amp;@#\/%?=~_|!:,.;]*[-A-Z0-9+&amp;@#\/%=~_|])/ig, Logger.COLORS.URL("$1"));
 	var words = content.split(" ");
 	var line = "";
 	if(Logger.WORDS_PER_LINE){
@@ -57,11 +54,11 @@ Logger.divider = function(character){
 }
 
 Logger.fail = function(message){
-	Logger.log("\n" + Logger.FAIL(" " + message + " ") + "\n");
+	Logger.log("\n" + Logger.COLORS.FAIL(" " + message + " ") + "\n");
 }
 
 Logger.success = function(message){
-	Logger.log("\n" + Logger.SUCCESS(" " + message + " ") + "\n");
+	Logger.log("\n" + Logger.COLORS.SUCCESS(" " + message + " ") + "\n");
 }
 
 module.exports = Logger;
