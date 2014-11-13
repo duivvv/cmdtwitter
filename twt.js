@@ -213,7 +213,6 @@ function whois(user){
 function result(err, result){
 	params = _parse_options(program);
 	TweetLogger.SET_WORDS_PER_LINE(params.words);
-	console.log(params.words);
 	if(err){
 		Logger.fail(err.msg);
 		return;
