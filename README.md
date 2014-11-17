@@ -142,3 +142,5 @@ Tweets are displayed in reverse order (newest ones last).
 * marking search results
 * better url expanding
 * better colouring (email - mention, hashtag - url problems)
+* trends
+* list '@username/list'

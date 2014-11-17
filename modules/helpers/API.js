@@ -22,7 +22,7 @@ function _process_data(data, cb){
 		var expander = new TwitterExpandURL();
 		expander.expand(i, data[i], {force: false}, function(err, id, results){
 			if(err){
-				return cb({msg: err.msg})
+				return cb(err);
 			}
 			if(results && results.length > 0){
 				for(var i = 0;i < results.length; i++){
@@ -46,87 +46,110 @@ function _parse_screen_name(screen_name){
 	return screen_name;
 }
 
-API.prototype.tweet = function(status, cb){
+API.prototype.tweet = function(status, params, cb){
 	if(status.length > 140){
-		return cb({
-			msg: "tweet is too long"
-		});
+		return cb(new Error("tweet is too long"));
 	}
 	this.client.post('statuses/update', {
 		status: status
 	}, function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({msg: "could not post tweet / " + err.message});
+			message = "could not post tweet / " + err.message;
+			return cb(new Error(message));
 		}
 		if(data){
+			message = "tweet posted";
 			return cb(null, {
-				msg: "tweet posted"
+				message: message,
+				params: params
 			});
 		}
 	});
 }
 
-API.prototype.follow = function(screen_name, cb){
+API.prototype.follow = function(screen_name, params, cb){
 	screen_name = _parse_screen_name(screen_name);
 	this.client.post('friendships/create', {
 		screen_name: screen_name
 	}, function(err, data, response) {
+
+		var message;
+
 		if(err){
-			var msg = "could not follow @" + screen_name +" / " + err.message
+			message = "could not follow @" + screen_name +" / " + err.message
 			if(err.statusCode === 403){
-				msg = "user @" + screen_name + " does not exist";
+				message = "user @" + screen_name + " does not exist";
 			}
-			return cb({
-				msg: msg
-			});
+			return cb(new Error(error));
 		}
+
 		if(data){
-			var msg = "following " + screen_name;
+			message = "following " + screen_name;
 			if(data.follow_request_sent){
-				msg = "request sent to @" + screen_name
+				message = "request sent to @" + screen_name
 			}
 			return cb(null, {
-				msg: msg
+				message: message,
+				params: params
 			});
 		}
+
 	});
 }
 
-API.prototype.unfollow = function(screen_name, cb){
+API.prototype.unfollow = function(screen_name, params, cb){
 	screen_name = _parse_screen_name(screen_name);
 	this.client.post('friendships/destroy', {
 		screen_name: screen_name
 	}, function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({msg: "could not unfollow @" + screen_name +" / " + err.message});
+			message = "could not unfollow @" + screen_name +" / " + err.message
+			return cb(new Error(message));
 		}
+
 		if(data){
 			return cb(null, {
-				msg: "unfollowed @" + screen_name
+				message: "unfollowed @" + screen_name,
+				params: params
 			});
 		}
+
 	});
 }
 
-API.prototype.whois = function(screen_name, cb){
+API.prototype.whois = function(screen_name, params, cb){
 	screen_name = _parse_screen_name(screen_name);
 	this.client.get('users/show', {
 		screen_name: screen_name
 	},(function(err, data, response) {
+
+		var message;
+
 		if(err){
-			var msg = "could not get information on @" + screen_name + " / " + err.message
+			message = "could not get information on @" + screen_name + " / " + err.message
 			if(err.statusCode === 404){
-				msg = "@" + screen_name + " does not exist";
+				message = "@" + screen_name + " does not exist";
 			}
-			return cb({
-				msg: msg
+			return cb(new Error(message));
+		}
+
+		if(data){
+			message = "displaying information on @" + screen_name;
+			var url = "https://twitter.com/" + screen_name;
+			return cb(null, {
+				data: data,
+				message: message,
+				params: params,
+				url: url
 			});
 		}
-		var msg = "displaying information on @" + screen_name;
-		return cb(null, {
-			data: data,
-			msg: msg
-		});
+
 	}).bind(this));
 }
 
@@ -142,26 +165,34 @@ API.prototype.search = function(query, params, cb){
 		q: query + flags,
 		count: params.limit,
 	},(function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({
-				msg: "could not get tweets / " + err.message
+			message = "could not get tweets / " + err.message;
+			return cb(new Error(message));
+		}
+
+		if(data){
+			if(data.statuses.length === 0){
+				message = "no tweets found for \"" + query + "\""
+				return cb(new Error(message));
+			}
+			var message = "displaying " + params.limit + " latest search results for \"" + query + "\"";
+			if(params.limit === 1){
+				message = "displaying last search result for \"" + query + "\"";
+			}
+			var url = "https://twitter.com/search?f=realtime&q=" + encodeURIComponent(query + flags);
+			_process_data.call(this, data.statuses, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					params: params,
+					url: url
+				});
 			});
 		}
-		if(data.statuses.length === 0){
-			return cb({
-				msg: "no tweets found for \"" + query + "\""
-			});
-		}
-		var msg = "displaying " + params.limit + " latest search results for \"" + query + "\"";
-		if(params.limit === 1){
-			msg = "displaying last search result for \"" + query + "\"";
-		}
-		_process_data.call(this, data.statuses, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg
-			});
-		});
+
 	}).bind(this));
 }
 
@@ -171,21 +202,29 @@ API.prototype.home_timeline = function(params, cb){
 		exclude_replies: !params.replies,
 		include_rts: params.retweets
 	}, (function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({
-				msg: "could not get home timeline / " + err.message
+			message = "could not get home timeline / " + err.message;
+			return cb(new Error(message));
+		}
+
+		if(data){
+			message = "displaying " + params.limit + " latest tweets on your timeline";
+			if(params.limit === 1){
+				message = "displaying last tweet on your timeline";
+			}
+			var url = "https://twitter.com";
+			_process_data.call(this, data, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					url: url
+				});
 			});
 		}
-		var msg = "displaying " + params.limit + " latest tweets on your timeline";
-		if(params.limit === 1){
-			msg = "displaying last tweet on your timeline";
-		}
-		_process_data.call(this, data, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg
-			});
-		});
+
 	}).bind(this));
 }
 
@@ -193,21 +232,30 @@ API.prototype.mentions_timeline = function(params, cb){
 	this.client.get('statuses/mentions_timeline', {
 		count: params.limit
 	}, (function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({
-				msg: "could not get mentions / " + err.message
+			message = "could not get mentions / " + err.message;
+			return cb(new Error(message));
+		}
+
+		if(data){
+			message = "displaying " + params.limit + " latest mentions";
+			if(params.limit === 1){
+				message = "displaying last mention";
+			}
+			var url = "https://twitter.com/mentions";
+			_process_data.call(this, data, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					params: params,
+					url: url
+				});
 			});
 		}
-		var msg = "displaying " + params.limit + " latest mentions";
-		if(params.limit === 1){
-			msg = "displaying last mention";
-		}
-		_process_data.call(this, data, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg
-			});
-		});
+
 	}).bind(this));
 }
 
@@ -220,25 +268,33 @@ API.prototype.list_timeline = function(screen_name, list_name, params, cb){
 		exclude_replies: !params.replies,
 		include_rts: params.retweets
 	}, (function(err, data, response) {
+
+		var message;
+
 		if(err){
-			var msg = "could not get list \"" +  list_name + "\" / " + err.message
+			message = "could not get list \"" +  list_name + "\" / " + err.message
 			if(err.statusCode === 404){
-				msg = "list \"" + list_name + "\" does not exist";
+				message = "list \"" + list_name + "\" does not exist";
 			}
-			return cb({
-				msg: msg
+			return cb(new Error(message));
+		}
+
+		if(data){
+			message = "displaying " + params.limit + " latest tweets in \"" + list_name + "\" list";
+			if(params.limit === 1){
+				message = "displaying last tweet in \"" + list_name + "\" list";
+			}
+			var url = "https://twitter.com/" + screen_name + "/lists/" + list_name;
+			_process_data.call(this, data, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					params: params,
+					url: url
+				});
 			});
 		}
-		var msg = "displaying " + params.limit + " latest tweets in \"" + list_name + "\" list";
-		if(params.limit === 1){
-			msg = "displaying last tweet in \"" + list_name + "\" list";
-		}
-		_process_data.call(this, data, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg
-			});
-		});
+
 	}).bind(this));
 }
 
@@ -246,22 +302,31 @@ API.prototype.direct_messages = function(params, cb){
 	this.client.get('direct_messages', {
 		count: params.limit
 	}, (function(err, data, response) {
+
+		var message;
+
 		if(err){
-			return cb({
-				msg: "could not get mentions / " + err.message
+			message = "could not get mentions / " + err.message;
+			return cb(new Error(message));
+		}
+
+		if(data){
+			vmessage ="displaying " + params.limit + " latest direct messages";
+			if(params.limit === 1){
+				message = "displaying last direct message";
+			}
+			var url = "https://twitter.com/messages";
+			_process_data.call(this, data, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					dm: true,
+					params: params,
+					url: url
+				});
 			});
 		}
-		var msg ="displaying " + params.limit + " latest direct messages";
-		if(params.limit === 1){
-			msg = "displaying last direct message";
-		}
-		_process_data.call(this, data, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg,
-				dm: true
-			});
-		});
+
 	}).bind(this));
 }
 
@@ -274,32 +339,41 @@ API.prototype.user_timeline = function(screen_name, params, cb){
 		exclude_replies: !params.replies,
 		include_rts: params.retweets
 	}, (function(err, data, response) {
+
+		var message;
+
 		if(err){
-			var msg = "could not get tweets of user @" + screen_name + " / " + err.message
+			message = "could not get tweets of user @" + screen_name + " / " + err.message
 			if(err.statusCode === 404){
-				msg = "@" + screen_name + " does not exist";
+				message = "@" + screen_name + " does not exist";
 			}else if(err.statusCode === 401){
-				msg = "@" + screen_name + "'s tweets are protected";
+				message = "@" + screen_name + "'s tweets are protected";
 			}
-			return cb({
-				msg: msg
+			return cb(new Error(message));
+		}
+
+		if(data){
+			message = "displaying last " + params.limit + " tweets by @" + screen_name;
+			if(params.limit === 1){
+				message = "displaying last tweet by @" + screen_name;
+			}
+			if(data.length === 0){
+				return cb(new Error("@" + screen_name + " has no tweets"));
+			}
+			var url = "https://twitter.com/" + screen_name;
+			if(params.replies){
+				url += "/with_replies";
+			}
+			_process_data.call(this, data, function(err, data){
+				return cb(null, {
+					data: data,
+					message: message,
+					params: params,
+					url: url
+				});
 			});
 		}
-		var msg = "displaying last " + params.limit + " tweets by @" + screen_name;
-		if(params.limit === 1){
-			msg = "displaying last tweet by @" + screen_name;
-		}
-		if(data.length === 0){
-			return cb({
-				msg: "@" + screen_name + " has no tweets"
-			});
-		}
-		_process_data.call(this, data, function(err, data){
-			return cb(null, {
-				data: data,
-				msg: msg
-			});
-		});
+
 	}).bind(this));
 }
 

@@ -34,6 +34,7 @@ function _parse_options(program){
 	var params = {}
 	params.words = parseInt(program.words) || 12;
 	params.limit = parseInt(program.limit) || 15
+	params.open = program.open || false;
 	params.replies = true;
 	params.retweets = true;
 	if(program.exclude){
@@ -73,6 +74,11 @@ function _parse_exclude(exclude){
 	return obj;
 }
 
+function _open_page(url){
+  var exec = require('child_process').exec
+  exec("open " + url);
+}
+
 if(screen_name.indexOf("@") === 0){
 	screen_name = screen_name.substring(1, screen_name.length);
 }
@@ -82,6 +88,7 @@ program
 	.usage('- cmdtwitter, a command line twitter client \n\n  $ twt {command} <argument> <options>')
   .option("-l, --limit <limit>", "limit results")
   .option("-w, --words <words>", "words per line")
+  .option("-o, --open", "open specific page")
   .option("-e, --exclude <flags>", "exclude tweets, pass r|replies or/and rt|retweets, comma separated");
   //.option("-f, --filter <flags>", "filter tweets, pass r|replies or/and rt|retweets, comma separated");
 
@@ -160,7 +167,8 @@ if(program.args && program.args.length === 0){
 }
 
 function tweet(status){
-	api.tweet(status, result);
+	params = _parse_options(program);
+	api.tweet(status, params, result);
 }
 
 function search(query){
@@ -199,25 +207,34 @@ function list_timeline(list_name){
 }
 
 function follow(screen_name){
-	api.follow(screen_name, result)
+	params = _parse_options(program);
+	api.follow(screen_name, params, result)
 }
 
 function unfollow(screen_name){
-	api.unfollow(screen_name, result)
+	params = _parse_options(program);
+	api.unfollow(screen_name, params, result)
 }
 
 function whois(user){
-	api.whois(user, whoisHandler);
+	params = _parse_options(program);
+	api.whois(user, params, whoisHandler);
 }
 
 function result(err, result){
 	params = _parse_options(program);
 	TweetLogger.SET_WORDS_PER_LINE(params.words);
 	if(err){
-		Logger.fail(err.msg);
+		Logger.fail(err.message);
 		return;
 	}
-	Logger.success(result.msg);
+	Logger.success(result.message);
+	if(result.params){
+		if(result.params.open){
+			_open_page(result.url);
+			return;
+		}
+	}
 	if(result.data){
 		var dm = result.dm || false;
 		var data = result.data.reverse();
@@ -230,8 +247,14 @@ function result(err, result){
 
 function whoisHandler(err, result){
 	if(err){
-		Logger.fail(err.msg);
+		Logger.fail(err.message);
 		return;
+	}
+	if(result.params){
+		if(result.params.open){
+			_open_page(result.url);
+			return;
+		}
 	}
 	Logger.divider();
 	if(result.data){
