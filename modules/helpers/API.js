@@ -79,7 +79,7 @@ API.prototype.follow = function(screen_name, params, cb){
 		var message;
 
 		if(err){
-			message = "could not follow @" + screen_name +" / " + err.message
+			message = "could not follow @" + screen_name + " / " + err.message
 			if(err.statusCode === 403){
 				message = "user @" + screen_name + " does not exist";
 			}

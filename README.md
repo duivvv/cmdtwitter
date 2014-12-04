@@ -1,11 +1,11 @@
-# cmdtwitter
+# twt
 
 ## install
 
 With [npm](http://npmjs.org) do:
 
 ```
-npm install -g cmdtwitter
+npm install -g twt
 ```
 
 ## setup
