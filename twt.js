@@ -85,7 +85,7 @@ if(screen_name.indexOf("@") === 0){
 
 program
 	.version(version)
-	.usage('- cmdtwitter, a command line twitter client \n\n  $ twt {command} <argument> <options>')
+	.usage('- twt, a command line twitter client \n\n  $ twt {command} <argument> <options>')
   .option("-l, --limit <limit>", "limit results")
   .option("-w, --words <words>", "words per line")
   .option("-o, --open", "open specific page")

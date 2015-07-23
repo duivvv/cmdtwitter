@@ -1,6 +1,6 @@
 {
   "name": "twt",
-  "version": "0.10.4",
+  "version": "0.10.5",
   "description": "command line twitter client",
   "main": "twt.js",
   "bin": {
